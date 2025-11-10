@@ -1,0 +1,449 @@
+/* ==================== CONTAINER & LAYOUT ==================== */
+
+.org-chart-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.org-chart-wrapper {
+    flex: 1;
+    overflow: auto;
+    padding: 40px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+}
+
+/* ==================== TOOLBAR ==================== */
+
+.org-chart-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Search Box */
+.toolbar-search {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+
+.search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.search-clear:hover {
+    background-color: #f0f0f0;
+}
+
+/* Zoom Controls */
+.toolbar-zoom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+}
+
+.zoom-button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d0d0d0;
+    background-color: #ffffff;
+    border-radius: 4px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zoom-button:hover {
+    background-color: #0078d4;
+    color: white;
+    border-color: #0078d4;
+}
+
+.zoom-button:active {
+    transform: scale(0.95);
+}
+
+.zoom-level {
+    min-width: 50px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Export Button */
+.export-button {
+    padding: 10px 16px;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.export-button:hover {
+    background-color: #005a9e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 120, 212, 0.3);
+}
+
+.export-button:active {
+    transform: translateY(0);
+}
+
+/* ==================== EMPLOYEE NODE CARD ==================== */
+
+.org-chart-node {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 200px;
+    max-width: 250px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.org-chart-node:hover {
+    border-color: #0078d4;
+    box-shadow: 0 8px 20px rgba(0, 120, 212, 0.2);
+    transform: translateY(-4px);
+}
+
+.org-chart-node:active {
+    transform: translateY(-2px);
+}
+
+/* Highlighted state (search result) */
+.highlighted .org-chart-node {
+    border-color: #ffc107;
+    background-color: #fffbf0;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 24px rgba(255, 193, 7, 0.6);
+    }
+}
+
+/* ==================== PROFILE IMAGE ==================== */
+
+.node-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.node-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e0e0e0;
+    transition: border-color 0.3s ease;
+}
+
+.org-chart-node:hover .node-image {
+    border-color: #0078d4;
+}
+
+/* Image Placeholder (Initial) */
+.node-image-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    border: 3px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.org-chart-node:hover .node-image-placeholder {
+    border-color: #0078d4;
+    transform: scale(1.05);
+}
+
+/* ==================== EMPLOYEE INFO ==================== */
+
+.node-content {
+    text-align: center;
+}
+
+.node-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.node-title {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.node-department {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Direct Reports Badge */
+.node-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    background-color: #0078d4;
+    color: white;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== CONNECTING LINES ==================== */
+
+/* Override react-organizational-chart default styles */
+.rst__tree {
+    padding: 20px;
+}
+
+/* Customize line appearance */
+.rst__lineHalfHorizontalRight::before,
+.rst__lineHalfHorizontalLeft::before,
+.rst__lineFullVertical::after,
+.rst__lineHalfVerticalTop::after,
+.rst__lineHalfVerticalBottom::after {
+    background-color: #bbb !important;
+}
+
+/* ==================== LOADING & EMPTY STATES ==================== */
+
+.org-chart-loading,
+.org-chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    font-size: 16px;
+    color: #666;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.org-chart-loading::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0078d4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+@media (max-width: 768px) {
+    .org-chart-toolbar {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .toolbar-search {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .org-chart-node {
+        min-width: 160px;
+        max-width: 180px;
+        padding: 12px;
+    }
+
+    .node-image,
+    .node-image-placeholder {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .node-name {
+        font-size: 14px;
+    }
+
+    .node-title {
+        font-size: 12px;
+    }
+
+    .org-chart-wrapper {
+        padding: 20px;
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+.org-chart-node:focus {
+    outline: 3px solid #0078d4;
+    outline-offset: 2px;
+}
+
+.org-chart-node:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .org-chart-node {
+        border-width: 3px;
+    }
+
+    .node-badge {
+        border: 2px solid white;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .org-chart-node,
+    .zoom-button,
+    .export-button,
+    .node-image,
+    .node-image-placeholder {
+        transition: none;
+    }
+
+    .highlighted .org-chart-node {
+        animation: none;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+    .org-chart-toolbar {
+        display: none;
+    }
+
+    .org-chart-wrapper {
+        overflow: visible;
+        padding: 0;
+    }
+
+    .org-chart-node {
+        break-inside: avoid;
+    }
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+
+.org-chart-wrapper::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.org-chart-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+}
+
+.org-chart-wrapper::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 6px;
+    border: 2px solid #f1f1f1;
+}
+
+.org-chart-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+/* ==================== TREE LAYOUT ADJUSTMENTS ==================== */
+
+/* Spacing between nodes */
+.rst__node {
+    margin: 16px 0;
+}
+
+/* Vertical spacing between levels */
+.rst__lineBlock {
+    height: 60px;
+}
+
+/* Horizontal spacing between siblings */
+.rst__nodeContent {
+    margin: 0 20px;
+}

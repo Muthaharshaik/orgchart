@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="lowcodelabs.orgchart.OrgChart" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Org Chart</name>
+    <description>This widget is an organization chart</description>
+    <icon/>
+    <properties>
+        <!--Data Source Configuration-->
+        <propertyGroup caption="Data Source">
+            <property key="employeeEntity" type="datasource" required="true" isList='true'>
+                <caption>Data Attribute</caption>
+                <description></description>
+            </property>
+        </propertyGroup>
+    
+        <!--Data Source attribute configurations-->
+        <propertyGroup caption="Attributes">
+            <property key="employeeId" type="attribute" dataSource="employeeEntity" required="true">
+                <caption>Employee ID</caption>
+                <description>Employee Id reference</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                    <attributeType name="AutoNumber"/>
+                </attributeTypes>
+            </property>
+            
+            <property key="managerId" type="attribute" dataSource="employeeEntity" required="true">
+                <caption>Manager/Parent ID</caption>
+                <description>Reference to the employee's manager (self-reference)</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                    <attributeType name="AutoNumber"/>
+                </attributeTypes>
+            </property>
+
+            <property key="employeeName" type="attribute" dataSource="employeeEntity" required="true">
+                <caption>Employee Name</caption>
+                <description>Reference to the employee name</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                </attributeTypes>
+            </property>
+
+            <property key="employeeTitle" type="attribute" dataSource="employeeEntity">
+                <caption>Job Title</caption>
+                <description>Reference to the employee title</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                </attributeTypes>
+            </property>
+
+            <property key="profileImage" type="attribute" dataSource="employeeEntity">
+                <caption>Profile Image</caption>
+                <description>Reference to the profile image</description>
+                <attributeTypes>
+                    <attributeType name="String"/> <!-- URL -->
+                </attributeTypes>
+            </property>
+
+            <property key="department" type="attribute" dataSource="employeeEntity">
+                <caption>Department</caption>
+                <description>Reference to the Department</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                </attributeTypes>
+            </property>
+
+            <property key="email" type="attribute" dataSource="employeeEntity">
+                <caption>Email</caption>
+                <description>Reference to the email</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                </attributeTypes>
+            </property>
+
+            <property key="phoneNumber" type="attribute" dataSource="employeeEntity">
+                <caption>Phone Number</caption>
+                <description>Reference to the phone Number</description>
+                <attributeTypes>
+                    <attributeType name="String"/>
+                </attributeTypes>
+            </property>
+        </propertyGroup>
+
+        <!-- Layout & Display Options-->
+        <propertyGroup caption=" Layout And Display Options">
+            <property key="showImages" type="boolean" defaultValue="true">
+                <caption>Show Profile Images</caption>
+                <description>Reference to the show images boolean</description>
+            </property>
+
+            <property key="showDepartment" type="boolean" defaultValue="true">
+                <caption>Show Department</caption>
+                <description>Reference to the show department boolean</description>
+            </property>
+        </propertyGroup>
+
+        <!--Action configurations-->
+        <propertyGroup caption="Actions">
+            <property key="onNodeClick" type="action">
+                <caption>On Node Click</caption>
+                <description>Action to execute when a node is clicked</description>
+            </property>
+
+            <property key="enableExport" type="boolean" defaultValue="false">
+                <caption>Enable Export (PNG/PDF)</caption>
+                <description>Reference to the enable export boolean</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>
