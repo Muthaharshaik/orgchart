@@ -3,7 +3,7 @@
         supportedPlatform="Web"
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
-    <name>Org Chart</name>
+    <name>Organization-Chart</name>
     <description>This widget is an organization chart</description>
     <icon/>
     <properties>
@@ -51,7 +51,7 @@
                 </attributeTypes>
             </property>
 
-            <property key="profileImage" type="attribute" dataSource="employeeEntity">
+            <property key="profileImage" type="attribute" dataSource="employeeEntity" required="false">
                 <caption>Profile Image</caption>
                 <description>Reference to the profile image</description>
                 <attributeTypes>
@@ -75,13 +75,6 @@
                 </attributeTypes>
             </property>
 
-            <property key="phoneNumber" type="attribute" dataSource="employeeEntity">
-                <caption>Phone Number</caption>
-                <description>Reference to the phone Number</description>
-                <attributeTypes>
-                    <attributeType name="String"/>
-                </attributeTypes>
-            </property>
         </propertyGroup>
 
         <!-- Layout & Display Options-->
