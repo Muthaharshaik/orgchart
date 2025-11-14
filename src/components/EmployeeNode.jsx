@@ -1,7 +1,19 @@
 //This is the visual card for each employee
 import React, {createElement} from "react";
 
-export default function EmployeeNode({employee, showImages, showDepartment, onClick, isHighlighted = false, nodeRef }) {
+export default function EmployeeNode({
+    employee, 
+    showImages, 
+    showDepartment, 
+    onClick, 
+    isHighlighted = false, 
+    nodeRef,
+    // NEW: Collapse props
+    isCollapsed = false,
+    hasChildren = false,
+    onToggleCollapse,
+    hiddenCount = 0
+}) {
     const directReports = employee.children?.length || 0;
 
     const handleClick = () => {
@@ -10,10 +22,17 @@ export default function EmployeeNode({employee, showImages, showDepartment, onCl
         }
     }
 
+    const handleCollapseClick = (e) => {
+        e.stopPropagation(); // Prevent node click
+        if (onToggleCollapse) {
+            onToggleCollapse(employee.id, e);
+        }
+    }
+
     return(
         <div
            ref={nodeRef}
-           className={`org-chart-node ${isHighlighted ? 'highlighted' : ''} ${showImages ? 'with-image' : 'no-image'}`}
+           className={`org-chart-node ${isHighlighted ? 'highlighted' : ''} ${showImages ? 'with-image' : 'no-image'} ${isCollapsed ? 'collapsed' : ''}`}
            onClick={handleClick}
            role="button"
            tabIndex={0}
@@ -48,14 +67,35 @@ export default function EmployeeNode({employee, showImages, showDepartment, onCl
                         <div className="node-department">{employee.department}</div>
                     )}
                     
-                    {/** Direct Reports badge - Inline with content */}
-                    {directReports > 0 && (
+                    {/** Direct Reports badge - Shows when expanded */}
+                    {!isCollapsed && directReports > 0 && (
                         <div className="node-badge">
                             {directReports} {directReports === 1 ? 'Report' : 'Reports'}
                         </div>
                     )}
+
+                    {/** NEW: Hidden count badge - Shows when collapsed */}
+                    {isCollapsed && hiddenCount > 0 && (
+                        <div className="node-badge collapsed-badge">
+                            +{hiddenCount} {hiddenCount === 1 ? 'hidden' : 'hidden'}
+                        </div>
+                    )}
                 </div>
             </div>
+
+            {/** NEW: Collapse/Expand button */}
+            {hasChildren && (
+                <button
+                    className="node-collapse-button"
+                    onClick={handleCollapseClick}
+                    aria-label={isCollapsed ? 'Expand' : 'Collapse'}
+                    title={isCollapsed ? `Show ${hiddenCount} employees` : 'Hide reports'}
+                >
+                    <span className="collapse-icon">
+                        {isCollapsed ? '⊕' : '⊖'}
+                    </span>
+                </button>
+            )}
         </div>
     )
 }

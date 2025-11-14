@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, createElement} from "react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import EmployeeNode from "./components/EmployeeNode";
-import { buildHierarchy, searchEmployees } from "./utils/dataTransformer";
+import { buildHierarchy, searchEmployees, countEmployees } from "./utils/dataTransformer";
 import './ui/OrgChart.css'
 import html2canvas from "html2canvas";
 
@@ -31,6 +31,9 @@ export default function OrgChart(props) {
     const [currentResultIndex, setCurrentResultIndex] = useState(0);
     const [showSearchDropdown, setShowSearchDropdown] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
+    
+    // NEW: Collapse state - stores node IDs that are collapsed
+    const [collapsedNodes, setCollapsedNodes] = useState(new Set());
 
     const chartRef = useRef(null);
     const highlightedNodeRef = useRef(null);
@@ -75,6 +78,23 @@ export default function OrgChart(props) {
             setHierarchyData(tree);
         }
     }, [employeeEntity, employeeId, managerId, employeeName, employeeTitle, profileImage, department, email, phoneNumber])
+
+    // Initial centering when hierarchy data loads
+    useEffect(() => {
+        if (hierarchyData && chartRef.current) {
+            setTimeout(() => {
+                const wrapper = chartRef.current;
+                const scrollWidth = wrapper.scrollWidth;
+                const clientWidth = wrapper.clientWidth;
+                const centerScrollLeft = (scrollWidth - clientWidth) / 2;
+                
+                wrapper.scrollTo({
+                    left: centerScrollLeft,
+                    behavior: 'auto'
+                });
+            }, 100);
+        }
+    }, [hierarchyData]);
 
     // Keyboard navigation
     useEffect(() => {
@@ -121,7 +141,88 @@ export default function OrgChart(props) {
     }
 
     /**
-     * Handle Search input change
+     * NEW: Toggle collapse state for a node
+     */
+    const handleToggleCollapse = (nodeId, event) => {
+        // Prevent triggering node click
+        if (event) {
+            event.stopPropagation();
+        }
+        
+        setCollapsedNodes(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(nodeId)) {
+                newSet.delete(nodeId);
+            } else {
+                newSet.add(nodeId);
+            }
+            return newSet;
+        });
+    }
+
+    /**
+     * NEW: Expand all nodes
+     */
+    const handleExpandAll = () => {
+        setCollapsedNodes(new Set());
+    }
+
+    /**
+     * NEW: Collapse all nodes except root
+     */
+    const handleCollapseAll = () => {
+        if (!hierarchyData) return;
+        
+        const allNodeIds = new Set();
+        const collectNodeIds = (node) => {
+            if (node.children && node.children.length > 0) {
+                allNodeIds.add(node.id);
+                node.children.forEach(child => collectNodeIds(child));
+            }
+        };
+        
+        // Don't collapse root, only its children
+        hierarchyData.children?.forEach(child => collectNodeIds(child));
+        setCollapsedNodes(allNodeIds);
+    }
+
+    /**
+     * NEW: Expand path to a specific node (used for search)
+     */
+    const expandPathToNode = (targetNodeId) => {
+        if (!hierarchyData) return;
+        
+        const pathNodes = [];
+        
+        // Find path from root to target node
+        const findPath = (node, target, path = []) => {
+            if (node.id === target) {
+                pathNodes.push(...path);
+                return true;
+            }
+            
+            if (node.children) {
+                for (const child of node.children) {
+                    if (findPath(child, target, [...path, node.id])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        
+        findPath(hierarchyData, targetNodeId);
+        
+        // Remove these nodes from collapsed set
+        setCollapsedNodes(prev => {
+            const newSet = new Set(prev);
+            pathNodes.forEach(nodeId => newSet.delete(nodeId));
+            return newSet;
+        });
+    }
+
+    /**
+     * Handle Search input change - UPDATED to work with collapse
     */
     const handleSearch = (event) => {
         const term = event.target.value;
@@ -130,7 +231,6 @@ export default function OrgChart(props) {
         if(term && hierarchyData) {
             setIsSearching(true);
             
-            // Simulate slight delay for smoother UX (optional)
             setTimeout(() => {
                 const results = searchEmployees(hierarchyData, term);
                 setSearchResults(results);
@@ -140,6 +240,8 @@ export default function OrgChart(props) {
                 if(results.length > 0) {
                     setCurrentResultIndex(0);
                     setHighlightedNode(results[0].id);
+                    // NEW: Expand path to show the search result
+                    expandPathToNode(results[0].id);
                 } else {
                     setHighlightedNode(null);
                 }
@@ -153,22 +255,25 @@ export default function OrgChart(props) {
     }
 
     /**
-     * Select result from dropdown
+     * Select result from dropdown - UPDATED to expand path
      */
     const handleSelectResult = (result, index) => {
         setCurrentResultIndex(index);
         setHighlightedNode(result.id);
         setShowSearchDropdown(false);
+        // NEW: Expand path to show this result
+        expandPathToNode(result.id);
     }
 
     /**
-     * Navigation functions
+     * Navigation functions - UPDATED to expand paths
      */
     const handleNextResult = () => {
         if (searchResults.length === 0) return;
         const nextIndex = (currentResultIndex + 1) % searchResults.length;
         setCurrentResultIndex(nextIndex);
         setHighlightedNode(searchResults[nextIndex].id);
+        expandPathToNode(searchResults[nextIndex].id);
     }
 
     const handlePrevResult = () => {
@@ -176,6 +281,7 @@ export default function OrgChart(props) {
         const prevIndex = currentResultIndex === 0 ? searchResults.length - 1 : currentResultIndex - 1;
         setCurrentResultIndex(prevIndex);
         setHighlightedNode(searchResults[prevIndex].id);
+        expandPathToNode(searchResults[prevIndex].id);
     }
 
     /**
@@ -204,47 +310,29 @@ export default function OrgChart(props) {
         setSearchTerm('')
         setHighlightedNode(null)
     }
+
     // Auto-scroll to center when zoom changes
     useEffect(() => {
-       if (chartRef.current) {
-        const wrapper = chartRef.current;
-        
-        // Small delay to let the transform complete
-        setTimeout(() => {
-            const scrollWidth = wrapper.scrollWidth;
-            const clientWidth = wrapper.clientWidth;
-            const scrollHeight = wrapper.scrollHeight;
-            const clientHeight = wrapper.clientHeight;
-
-            const centerScrollLeft = (scrollWidth - clientWidth) / 2;
-            const centerScrollTop = Math.max(0, (scrollHeight - clientHeight) / 2);
-            
-            // Smooth scroll to center
-            wrapper.scrollTo({
-                left: centerScrollLeft,
-                top: centerScrollTop,
-                // behavior:'smooth'
-            });
-        }, 50);
-    }
-}, [zoomLevel, hierarchyData]);
-
-// Initial centering when hierarchy data loads
-useEffect(() => {
-    if (hierarchyData && chartRef.current) {
-        setTimeout(() => {
+        if (chartRef.current) {
             const wrapper = chartRef.current;
-            const scrollWidth = wrapper.scrollWidth;
-            const clientWidth = wrapper.clientWidth;
-            const centerScrollLeft = (scrollWidth - clientWidth) / 2;
             
-            wrapper.scrollTo({
-                left: centerScrollLeft,
-                // behavior: 'auto' // instant for initial load
-            });
-        }, 100);
-    }
-}, [hierarchyData]);
+            setTimeout(() => {
+                const scrollWidth = wrapper.scrollWidth;
+                const clientWidth = wrapper.clientWidth;
+                const scrollHeight = wrapper.scrollHeight;
+                const clientHeight = wrapper.clientHeight;
+                
+                const centerScrollLeft = (scrollWidth - clientWidth) / 2;
+                const centerScrollTop = Math.max(0, (scrollHeight - clientHeight) / 4);
+                
+                wrapper.scrollTo({
+                    left: centerScrollLeft,
+                    top: centerScrollTop,
+                    behavior: 'smooth'
+                });
+            }, 50);
+        }
+    }, [zoomLevel, hierarchyData, collapsedNodes]); // Added collapsedNodes
 
     const handleRemove = () => {
         setSearchTerm('');
@@ -253,8 +341,6 @@ useEffect(() => {
         setCurrentResultIndex(0);
         setShowSearchDropdown(false);
     }
-    
-
 
     /**
      * Export chart as PNG
@@ -276,12 +362,17 @@ useEffect(() => {
     };
 
     /**
-     * Recursively render the org chart tree
+     * Recursively render the org chart tree - UPDATED with collapse logic
      */
     const renderTree = (node) => {
         if(!node) return null;
         
         const isHighlighted = highlightedNode === node.id;
+        const isCollapsed = collapsedNodes.has(node.id);
+        const hasChildren = node.children && node.children.length > 0;
+        
+        // Calculate total hidden employees count
+        const hiddenCount = isCollapsed && hasChildren ? countEmployees(node) - 1 : 0;
         
         return(
             <TreeNode
@@ -295,11 +386,17 @@ useEffect(() => {
                             onClick={handleNodeClick}
                             isHighlighted={isHighlighted}
                             nodeRef={isHighlighted ? highlightedNodeRef : null}
+                            // NEW: Pass collapse props
+                            isCollapsed={isCollapsed}
+                            hasChildren={hasChildren}
+                            onToggleCollapse={handleToggleCollapse}
+                            hiddenCount={hiddenCount}
                         />
                     </div>
                 }
             >
-                {node.children && node.children.length > 0 && 
+                {/* Only render children if not collapsed */}
+                {!isCollapsed && hasChildren && 
                     node.children.map(child => renderTree(child))
                 }
             </TreeNode>
@@ -434,12 +531,29 @@ useEffect(() => {
                     )}
                 </div>
 
+                {/* NEW: Collapse Controls */}
+                <div className="toolbar-collapse">
+                    <button
+                        onClick={handleExpandAll}
+                        className="collapse-button"
+                        title="Expand all nodes"
+                    >
+                        <span className="collapse-icon">⊞</span> Expand All
+                    </button>
+                    <button
+                        onClick={handleCollapseAll}
+                        className="collapse-button"
+                        title="Collapse all nodes"
+                    >
+                        <span className="collapse-icon">⊟</span> Collapse All
+                    </button>
+                </div>
+
                 {/* Zoom Controls */}
                 <div className="toolbar-zoom">
                     <button
                         onClick={handleZoomOut}
                         className="zoom-button"
-                        // disabled={zoomLevel <= 0.5}
                         aria-label="Zoom out"
                         title="Zoom out"
                     >
@@ -451,7 +565,6 @@ useEffect(() => {
                     <button
                         onClick={handleZoomIn}
                         className="zoom-button"
-                        // disabled={zoomLevel >= 1.5}
                         aria-label="Zoom in"
                         title="Zoom in"
                     >
@@ -483,13 +596,14 @@ useEffect(() => {
                 ref={chartRef}
             >
                 <div
-                style={{
-                            transform: `scale(${zoomLevel})`,
-                            transformOrigin: 'left top', //changed from left top
-                            transition: 'transform 0.2s ease',
-                            display: 'inline-block',
-                            // padding: `${Math.max(0, (zoomLevel - 1) * 100)}%`,
-                            minWidth: '100%'}}
+                    style={{
+                        transform: `scale(${zoomLevel})`,
+                        transformOrigin: 'center top',
+                        transition: 'transform 0.2s ease',
+                        display: 'inline-block',
+                        minWidth: '100%',
+                        padding: `20px ${Math.max(50, (1 - zoomLevel) * 150)}px`
+                    }}
                 >
                     <Tree
                         lineWidth="2px"
@@ -504,11 +618,18 @@ useEffect(() => {
                                     onClick={handleNodeClick}
                                     isHighlighted={highlightedNode === hierarchyData.id}
                                     nodeRef={highlightedNode === hierarchyData.id ? highlightedNodeRef : null}
+                                    // Root node collapse props
+                                    isCollapsed={collapsedNodes.has(hierarchyData.id)}
+                                    hasChildren={hierarchyData.children && hierarchyData.children.length > 0}
+                                    onToggleCollapse={handleToggleCollapse}
+                                    hiddenCount={collapsedNodes.has(hierarchyData.id) ? countEmployees(hierarchyData) - 1 : 0}
                                 />
                             </div>
                         }
                     >
-                        {hierarchyData.children && hierarchyData.children.map(child => renderTree(child))}
+                        {!collapsedNodes.has(hierarchyData.id) && hierarchyData.children && 
+                            hierarchyData.children.map(child => renderTree(child))
+                        }
                     </Tree>
                 </div>
             </div>
