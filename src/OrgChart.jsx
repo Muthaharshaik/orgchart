@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, createElement} from "react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import EmployeeNode from "./components/EmployeeNode";
-import { buildHierarchy, searchEmployees, countEmployees } from "./utils/dataTransformer";
+import { buildHierarchy, searchEmployees } from "./utils/dataTransformer";
 import './ui/OrgChart.css'
 import html2canvas from "html2canvas";
 
@@ -31,9 +31,9 @@ export default function OrgChart(props) {
     const [currentResultIndex, setCurrentResultIndex] = useState(0);
     const [showSearchDropdown, setShowSearchDropdown] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
-    
-    // NEW: Collapse state - stores node IDs that are collapsed
+    // collapse state - stores node ids that are collapsed
     const [collapsedNodes, setCollapsedNodes] = useState(new Set());
+    //Here we used set so that we can easily add or delete the ids with out any duplicates
 
     const chartRef = useRef(null);
     const highlightedNodeRef = useRef(null);
@@ -87,7 +87,7 @@ export default function OrgChart(props) {
                 const scrollWidth = wrapper.scrollWidth;
                 const clientWidth = wrapper.clientWidth;
                 const centerScrollLeft = (scrollWidth - clientWidth) / 2;
-                
+
                 wrapper.scrollTo({
                     left: centerScrollLeft,
                     behavior: 'auto'
@@ -141,88 +141,83 @@ export default function OrgChart(props) {
     }
 
     /**
-     * NEW: Toggle collapse state for a node
+     * Toggle collapse state for a node
      */
     const handleToggleCollapse = (nodeId, event) => {
-        // Prevent triggering node click
-        if (event) {
-            event.stopPropagation();
+        if(event) {
+           event.stopPropagation();
         }
-        
         setCollapsedNodes(prev => {
             const newSet = new Set(prev);
             if (newSet.has(nodeId)) {
-                newSet.delete(nodeId);
+                newSet.delete(nodeId)
             } else {
-                newSet.add(nodeId);
+                newSet.add(nodeId)
             }
-            return newSet;
-        });
+            return newSet
+        })
+    }
+
+
+    /**
+     *This function is used to collapse all the children except CEO
+     */
+    const handleCollapseAll = () => {
+        if (!hierarchyData) return;
+        const allNodeIds = new Set();
+        const collectNodeIds = (node) => {
+            allNodeIds.add(node.id)
+            if (node.children) {
+                node.children.forEach(child => collectNodeIds(child))
+            }
+        }
+        collectNodeIds(hierarchyData);
+        setCollapsedNodes(allNodeIds)
     }
 
     /**
-     * NEW: Expand all nodes
+     * This function is expand all the nodes by creating an empty set
      */
     const handleExpandAll = () => {
         setCollapsedNodes(new Set());
     }
 
     /**
-     * NEW: Collapse all nodes except root
-     */
-    const handleCollapseAll = () => {
-        if (!hierarchyData) return;
-        
-        const allNodeIds = new Set();
-        const collectNodeIds = (node) => {
-            if (node.children && node.children.length > 0) {
-                allNodeIds.add(node.id);
-                node.children.forEach(child => collectNodeIds(child));
-            }
-        };
-        
-        // Don't collapse root, only its children
-        hierarchyData.children?.forEach(child => collectNodeIds(child));
-        setCollapsedNodes(allNodeIds);
-    }
-
-    /**
-     * NEW: Expand path to a specific node (used for search)
+     * This function is used to expand path to a specific node which is used for search
      */
     const expandPathToNode = (targetNodeId) => {
         if (!hierarchyData) return;
-        
+        //This will store the parents of the searched Node
         const pathNodes = [];
-        
-        // Find path from root to target node
-        const findPath = (node, target, path = []) => {
+        //Recursive function which will try to reach the searched employee starting from CEO
+        const findPath = (node, target, path=[]) => {
+            //path refers to the nodes visited so far
+            //if we found the searched node then we will push that path in the pathNodes array
             if (node.id === target) {
-                pathNodes.push(...path);
+                pathNodes.push(...path)
                 return true;
             }
-            
+            //else we will go deep to find the path
             if (node.children) {
-                for (const child of node.children) {
-                    if (findPath(child, target, [...path, node.id])) {
+                for(const child of node.children) {
+                    if (findPath(child,target, [...path, node.id])) {
                         return true;
                     }
                 }
             }
             return false;
-        };
-        
+        }
         findPath(hierarchyData, targetNodeId);
-        
-        // Remove these nodes from collapsed set
+        //Now remove the path nodes from the collapsed nodes
         setCollapsedNodes(prev => {
             const newSet = new Set(prev);
             pathNodes.forEach(nodeId => newSet.delete(nodeId));
             return newSet;
-        });
+        })
     }
 
     /**
-     * Handle Search input change - UPDATED to work with collapse
+     * Handle Search input change
     */
     const handleSearch = (event) => {
         const term = event.target.value;
@@ -231,6 +226,7 @@ export default function OrgChart(props) {
         if(term && hierarchyData) {
             setIsSearching(true);
             
+            // Simulate slight delay for smoother UX (optional)
             setTimeout(() => {
                 const results = searchEmployees(hierarchyData, term);
                 setSearchResults(results);
@@ -240,7 +236,7 @@ export default function OrgChart(props) {
                 if(results.length > 0) {
                     setCurrentResultIndex(0);
                     setHighlightedNode(results[0].id);
-                    // NEW: Expand path to show the search result
+                    //Expand path to show the search result
                     expandPathToNode(results[0].id);
                 } else {
                     setHighlightedNode(null);
@@ -255,18 +251,18 @@ export default function OrgChart(props) {
     }
 
     /**
-     * Select result from dropdown - UPDATED to expand path
+     * Select result from dropdown
      */
     const handleSelectResult = (result, index) => {
         setCurrentResultIndex(index);
         setHighlightedNode(result.id);
         setShowSearchDropdown(false);
-        // NEW: Expand path to show this result
+        //Expand path to show this result
         expandPathToNode(result.id);
     }
 
     /**
-     * Navigation functions - UPDATED to expand paths
+     * Navigation functions
      */
     const handleNextResult = () => {
         if (searchResults.length === 0) return;
@@ -310,29 +306,29 @@ export default function OrgChart(props) {
         setSearchTerm('')
         setHighlightedNode(null)
     }
-
     // Auto-scroll to center when zoom changes
     useEffect(() => {
-        if (chartRef.current) {
-            const wrapper = chartRef.current;
+       if (chartRef.current) {
+        const wrapper = chartRef.current;
+        
+        // Small delay to let the transform complete
+        setTimeout(() => {
+            const scrollWidth = wrapper.scrollWidth;
+            const clientWidth = wrapper.clientWidth;
+            const scrollHeight = wrapper.scrollHeight;
+            const clientHeight = wrapper.clientHeight;
+
+            const centerScrollLeft = (scrollWidth - clientWidth) / 2;
+            const centerScrollTop = Math.max(0, (scrollHeight - clientHeight) / 2);
             
-            setTimeout(() => {
-                const scrollWidth = wrapper.scrollWidth;
-                const clientWidth = wrapper.clientWidth;
-                const scrollHeight = wrapper.scrollHeight;
-                const clientHeight = wrapper.clientHeight;
-                
-                const centerScrollLeft = (scrollWidth - clientWidth) / 2;
-                const centerScrollTop = Math.max(0, (scrollHeight - clientHeight) / 4);
-                
-                wrapper.scrollTo({
-                    left: centerScrollLeft,
-                    top: centerScrollTop,
-                    behavior: 'smooth'
-                });
-            }, 50);
-        }
-    }, [zoomLevel, hierarchyData, collapsedNodes]); // Added collapsedNodes
+            // Smooth scroll to center
+            wrapper.scrollTo({
+                left: centerScrollLeft,
+                // behavior:'smooth'
+            });
+        }, 50);
+    }
+}, [zoomLevel, hierarchyData]);
 
     const handleRemove = () => {
         setSearchTerm('');
@@ -361,19 +357,18 @@ export default function OrgChart(props) {
         });
     };
 
+
+    /** TODO: To collapse all the nodes initially */
+
     /**
-     * Recursively render the org chart tree - UPDATED with collapse logic
+     * Recursively render the org chart tree
      */
     const renderTree = (node) => {
         if(!node) return null;
         
         const isHighlighted = highlightedNode === node.id;
         const isCollapsed = collapsedNodes.has(node.id);
-        const hasChildren = node.children && node.children.length > 0;
-        
-        // Calculate total hidden employees count
-        const hiddenCount = isCollapsed && hasChildren ? countEmployees(node) - 1 : 0;
-        
+        const hasChildren = node.children && node.children.length > 0;        
         return(
             <TreeNode
                 key={node.id}
@@ -386,17 +381,15 @@ export default function OrgChart(props) {
                             onClick={handleNodeClick}
                             isHighlighted={isHighlighted}
                             nodeRef={isHighlighted ? highlightedNodeRef : null}
-                            // NEW: Pass collapse props
                             isCollapsed={isCollapsed}
                             hasChildren={hasChildren}
                             onToggleCollapse={handleToggleCollapse}
-                            hiddenCount={hiddenCount}
                         />
                     </div>
                 }
             >
-                {/* Only render children if not collapsed */}
-                {!isCollapsed && hasChildren && 
+                {/* Only Render children if not collapsed*/}
+                {!isCollapsed && hasChildren && node.children && node.children.length > 0 && 
                     node.children.map(child => renderTree(child))
                 }
             </TreeNode>
@@ -531,21 +524,21 @@ export default function OrgChart(props) {
                     )}
                 </div>
 
-                {/* NEW: Collapse Controls */}
+                {/*Collapse Controls */}
                 <div className="toolbar-collapse">
                     <button
                         onClick={handleExpandAll}
                         className="collapse-button"
                         title="Expand all nodes"
                     >
-                        <span className="collapse-icon">⊞</span> Expand All
+                    Expand All
                     </button>
                     <button
                         onClick={handleCollapseAll}
                         className="collapse-button"
                         title="Collapse all nodes"
                     >
-                        <span className="collapse-icon">⊟</span> Collapse All
+                    Collapse All
                     </button>
                 </div>
 
@@ -554,6 +547,7 @@ export default function OrgChart(props) {
                     <button
                         onClick={handleZoomOut}
                         className="zoom-button"
+                        disabled={zoomLevel <= 0.5}
                         aria-label="Zoom out"
                         title="Zoom out"
                     >
@@ -565,6 +559,7 @@ export default function OrgChart(props) {
                     <button
                         onClick={handleZoomIn}
                         className="zoom-button"
+                        disabled={zoomLevel >= 1.5}
                         aria-label="Zoom in"
                         title="Zoom in"
                     >
@@ -596,14 +591,13 @@ export default function OrgChart(props) {
                 ref={chartRef}
             >
                 <div
-                    style={{
-                        transform: `scale(${zoomLevel})`,
-                        transformOrigin: 'center top',
-                        transition: 'transform 0.2s ease',
-                        display: 'inline-block',
-                        minWidth: '100%',
-                        padding: `20px ${Math.max(50, (1 - zoomLevel) * 150)}px`
-                    }}
+                style={{
+                            transform: `scale(${zoomLevel})`,
+                            transformOrigin: 'left top', //changed from left top
+                            transition: 'transform 0.2s ease',
+                            display: 'inline-block',
+                            // padding: `${Math.max(0, (zoomLevel - 1) * 100)}%`,
+                            minWidth: '100%'}}
                 >
                     <Tree
                         lineWidth="2px"
@@ -622,7 +616,6 @@ export default function OrgChart(props) {
                                     isCollapsed={collapsedNodes.has(hierarchyData.id)}
                                     hasChildren={hierarchyData.children && hierarchyData.children.length > 0}
                                     onToggleCollapse={handleToggleCollapse}
-                                    hiddenCount={collapsedNodes.has(hierarchyData.id) ? countEmployees(hierarchyData) - 1 : 0}
                                 />
                             </div>
                         }

@@ -1,19 +1,7 @@
 //This is the visual card for each employee
 import React, {createElement} from "react";
 
-export default function EmployeeNode({
-    employee, 
-    showImages, 
-    showDepartment, 
-    onClick, 
-    isHighlighted = false, 
-    nodeRef,
-    // NEW: Collapse props
-    isCollapsed = false,
-    hasChildren = false,
-    onToggleCollapse,
-    hiddenCount = 0
-}) {
+export default function EmployeeNode({employee, showImages, showDepartment, onClick, isHighlighted = false, nodeRef, isCollapsed = false, hasChildren = false, onToggleCollapse }) {
     const directReports = employee.children?.length || 0;
 
     const handleClick = () => {
@@ -67,35 +55,15 @@ export default function EmployeeNode({
                         <div className="node-department">{employee.department}</div>
                     )}
                     
-                    {/** Direct Reports badge - Shows when expanded */}
-                    {!isCollapsed && directReports > 0 && (
-                        <div className="node-badge">
-                            {directReports} {directReports === 1 ? 'Report' : 'Reports'}
-                        </div>
-                    )}
-
-                    {/** NEW: Hidden count badge - Shows when collapsed */}
-                    {isCollapsed && hiddenCount > 0 && (
-                        <div className="node-badge collapsed-badge">
-                            +{hiddenCount} {hiddenCount === 1 ? 'hidden' : 'hidden'}
-                        </div>
+                    {/** Show badge only When collapsed */}
+                    {hasChildren && directReports > 0 && (
+                        <div className="node-badge" onClick={handleCollapseClick} style={{cursor: "pointer"}} title={isCollapsed ? `Expand ${directReports} reports` : `Hide reports`}>
+                            {isCollapsed
+                             ? `Show ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
+                             : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`}                            </div>
                     )}
                 </div>
             </div>
-
-            {/** NEW: Collapse/Expand button */}
-            {hasChildren && (
-                <button
-                    className="node-collapse-button"
-                    onClick={handleCollapseClick}
-                    aria-label={isCollapsed ? 'Expand' : 'Collapse'}
-                    title={isCollapsed ? `Show ${hiddenCount} employees` : 'Hide reports'}
-                >
-                    <span className="collapse-icon">
-                        {isCollapsed ? '⊕' : '⊖'}
-                    </span>
-                </button>
-            )}
         </div>
     )
 }

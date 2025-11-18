@@ -23,7 +23,7 @@
     position: relative;
 }
 
-/* Center the entire tree properly */
+/* Center the entire tree */
 .org-chart-wrapper > div {
     display: flex;
     justify-content: center;
@@ -43,7 +43,6 @@
     border-bottom: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     z-index: 10;
-    flex-wrap: wrap;
 }
 
 
@@ -53,7 +52,6 @@
     flex: 1;
     max-width: 500px;
     position: relative;
-    min-width: 250px;
 }
 
 .search-input-wrapper {
@@ -370,7 +368,7 @@
     color: #999;
 }
 
-/* ==================== NEW: COLLAPSE CONTROLS ==================== */
+/* ==================== RESPONSIVE UPDATES ==================== */
 
 .toolbar-collapse {
     display: flex;
@@ -394,24 +392,20 @@
     align-items: center;
     gap: 6px;
     color: #333;
-}
-
+    }
+    
 .collapse-button:hover {
     background-color: #0078d4;
     color: white;
     border-color: #0078d4;
     transform: translateY(-1px);
     box-shadow: 0 2px 6px rgba(0, 120, 212, 0.2);
-}
-
+    }
+    
 .collapse-button:active {
     transform: translateY(0);
-}
+    }
 
-.collapse-icon {
-    font-size: 16px;
-    line-height: 1;
-}
 
 /* Zoom Controls */
 .toolbar-zoom {
@@ -448,6 +442,11 @@
     transform: scale(0.95);
 }
 
+/* .zoom-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+} */
+
 .zoom-level {
     min-width: 50px;
     text-align: center;
@@ -459,7 +458,8 @@
 /* Export Button */
 .export-button {
     padding: 10px 16px;
-    background-color: #2e3192;
+    /* background-color: #0078d4; */
+     background-color: #2e3192;
     color: white;
     border: none;
     border-radius: 6px;
@@ -473,9 +473,10 @@
 }
 
 .export-button:hover {
-    background-color: #1f2264;
+    /* background-color: #005a9e; */
+    background-color: #2e3192;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(46, 49, 146, 0.3);
+    box-shadow: 0 4px 8px #2e3192;
 }
 
 .export-button:active {
@@ -495,7 +496,7 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin: 0 auto;
-    position: relative; /* For collapse button positioning */
+    /* text-align: center; */
 }
 
 .org-chart-node:hover {
@@ -510,8 +511,7 @@
 
 /* Highlighted state (search result) */
 .org-chart-node.highlighted {
-    background-color: #fff9e6;
-    border-color: #ffc107;
+    background-color: lightgray;
     box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4);
 }
 
@@ -536,57 +536,14 @@
     justify-content: center;
 }
 
-/* ==================== NEW: COLLAPSE BUTTON ==================== */
-
-.node-collapse-button {
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid #e0e0e0;
-    background-color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    line-height: 1;
-    transition: all 0.2s ease;
-    z-index: 10;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.node-collapse-button:hover {
-    background-color: #0078d4;
-    border-color: #0078d4;
-    color: white;
-    transform: translateX(-50%) scale(1.15);
-    box-shadow: 0 3px 8px rgba(0, 120, 212, 0.3);
-}
-
-.node-collapse-button:active {
-    transform: translateX(-50%) scale(1.05);
-}
-
-.node-collapse-button .collapse-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* When node is collapsed, change button appearance */
-.org-chart-node.collapsed .node-collapse-button {
-    background-color: #f0f0f0;
-    border-color: #bbb;
-}
-
-.org-chart-node.collapsed .node-collapse-button:hover {
-    background-color: #0078d4;
-    border-color: #0078d4;
-}
+/* @keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 24px rgba(255, 193, 7, 0.6);
+    }
+} */
 
 /* ==================== PROFILE IMAGE ==================== */
 
@@ -673,7 +630,7 @@
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
 }
 
 /* Direct Reports Badge */
@@ -689,21 +646,6 @@
     font-weight: 600;
     margin-top: 4px;
     letter-spacing: 0.3px;
-}
-
-/* NEW: Collapsed badge (shows hidden count) */
-.node-badge.collapsed-badge {
-    background-color: #ff9800;
-    animation: pulse-orange 2s ease-in-out infinite;
-}
-
-@keyframes pulse-orange {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4);
-    }
-    50% {
-        box-shadow: 0 0 0 4px rgba(255, 152, 0, 0);
-    }
 }
 
 /* ==================== LOADING & EMPTY STATES ==================== */
@@ -816,15 +758,6 @@
     outline: none;
 }
 
-.node-collapse-button:focus {
-    outline: 2px solid #0078d4;
-    outline-offset: 2px;
-}
-
-.node-collapse-button:focus:not(:focus-visible) {
-    outline: none;
-}
-
 /* High contrast mode support */
 @media (prefers-contrast: high) {
     .org-chart-node {
@@ -904,7 +837,8 @@
     background: #a0a0a0;
 }
 
-/* Hiding the nodes which dont have children */
+
+/* Hiding the nodes which dont have childern */
 .org-chart-wrapper ul:empty,
 .org-chart-wrapper ul:not(:has(li)) {
     display: none !important;
