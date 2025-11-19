@@ -10,16 +10,16 @@
         <!--Data Source Configuration-->
         <propertyGroup caption="Data Source">
             <property key="employeeEntity" type="datasource" required="true" isList='true'>
-                <caption>Data Attribute</caption>
-                <description></description>
+                <caption>Employee Data Source</caption>
+                <description>Select the data source containing your employee/organization data. Must include employee ID, manager ID, and name fields at minimum.</description>
             </property>
         </propertyGroup>
     
         <!--Data Source attribute configurations-->
-        <propertyGroup caption="Attributes">
+        <propertyGroup caption="Required Attributes">
             <property key="employeeId" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Employee ID</caption>
-                <description>Employee Id reference</description>
+                <description>Unique identifier for each employee. Must be unique across all employees in the organization. Accepts String or AutoNumber types.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                     <attributeType name="AutoNumber"/>
@@ -28,7 +28,7 @@
             
             <property key="managerId" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Manager/Parent ID</caption>
-                <description>Reference to the employee's manager (self-reference)</description>
+                <description>Reference to the employee's direct manager using their Employee ID. Leave empty or use self-reference for the top-level employee (CEO/President). This creates the hierarchical relationship.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                     <attributeType name="AutoNumber"/>
@@ -37,69 +37,72 @@
 
             <property key="employeeName" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Employee Name</caption>
-                <description>Reference to the employee name</description>
+                <description>Full name of the employee to be displayed on the organization chart node.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
+        </propertyGroup>
 
+        <!--Optional Attributes-->
+        <propertyGroup caption="Optional Attributes">
             <property key="employeeTitle" type="attribute" dataSource="employeeEntity">
                 <caption>Job Title</caption>
-                <description>Reference to the employee title</description>
+                <description>Employee's job title or position (e.g., "Software Engineer", "Senior Manager"). Displayed below the employee name.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
 
             <property key="profileImage" type="attribute" dataSource="employeeEntity" required="false">
-                <caption>Profile Image (optional)</caption>
-                <description>Reference to the profile image</description>
+                <caption>Profile Image</caption>
+                <description>Employee's profile image. Supports: 1) String URL (e.g., "https://...image.jpg"), 2 Dynamic Image object (System.Image or custom image entity), or 3 Path to image in related entity. If not provided, initials will be shown.</description>
                 <attributeTypes>
-                    <attributeType name="String"/> <!-- URL -->
+                    <attributeType name="String"/>
+                    <attributeType name="Binary"/>
                 </attributeTypes>
             </property>
 
             <property key="department" type="attribute" dataSource="employeeEntity">
                 <caption>Department</caption>
-                <description>Reference to the Department</description>
+                <description>Employee's department or team name (e.g., "Engineering", "Sales", "HR"). Shown as a badge on the node card.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
 
             <property key="email" type="attribute" dataSource="employeeEntity">
-                <caption>Email</caption>
-                <description>Reference to the email</description>
+                <caption>Email Address</caption>
+                <description>Employee's email address. Currently stored but not displayed. Can be used in custom actions.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
-
         </propertyGroup>
 
         <!-- Layout & Display Options-->
-        <propertyGroup caption=" Layout And Display Options">
+        <propertyGroup caption="Display Options">
             <property key="showImages" type="boolean" defaultValue="true">
                 <caption>Show Profile Images</caption>
-                <description>Reference to the show images boolean</description>
+                <description>Toggle visibility of employee profile images. When disabled, only text information is shown. Initials are displayed if no image is provided.</description>
             </property>
 
             <property key="showDepartment" type="boolean" defaultValue="true">
                 <caption>Show Department</caption>
-                <description>Reference to the show department boolean</description>
+                <description>Toggle visibility of department information on employee cards. Department appears as a badge below the job title.</description>
             </property>
         </propertyGroup>
 
         <!--Action configurations-->
-        <propertyGroup caption="Actions">
+        <propertyGroup caption="Interactions">
             <property key="onNodeClick" type="action">
-                <caption>On Node Click</caption>
-                <description>Action to execute when a node is clicked</description>
+                <caption>On Node Click Action</caption>
+                <description>Action to execute when an employee node is clicked. Use this to open detail pages, show popups, or trigger workflows. The clicked employee's context is available.</description>
             </property>
 
             <property key="enableExport" type="boolean" defaultValue="false">
-                <caption>Enable Export (PNG/PDF)</caption>
-                <description>Reference to the enable export boolean</description>
+                <caption>Enable Export (PNG)</caption>
+                <description>Show the "Export PNG" button in the toolbar. Allows users to download the current organization chart view as a PNG image for reports and documentation.</description>
             </property>
         </propertyGroup>
     </properties>

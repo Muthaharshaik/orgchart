@@ -2,13 +2,45 @@
   "name": "orgchart",
   "widgetName": "OrgChart",
   "version": "1.0.0",
-  "description": "This widget is an organization chart",
-  "copyright": "© Mendix Technology BV 2022. All rights reserved.",
-  "author": "Muthahar Shaik",
+  "description": "A powerful organization chart widget for Mendix that visualizes hierarchical employee structures with interactive features including real-time search, collapse/expand branches, zoom controls, and PNG export. Perfect for HR dashboards and organizational management applications.",
+  "copyright": "© 2024 Muthahar Shaik (LowCodeLabs). All rights reserved.",
+  "author": {
+    "name": "Muthahar Shaik",
+    "email": "your.email@example.com",
+    "url": "https://lowcodelabs.com"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/yourusername/mendix-orgchart-widget#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mendix-orgchart-widget.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/mendix-orgchart-widget/issues",
+    "email": "your.email@example.com"
+  },
+  "keywords": [
+    "mendix",
+    "widget",
+    "organization",
+    "chart",
+    "org-chart",
+    "hierarchy",
+    "organizational-chart",
+    "employee",
+    "structure",
+    "tree",
+    "visualization",
+    "hr",
+    "human-resources",
+    "reporting",
+    "management",
+    "interactive",
+    "lowcodelabs"
+  ],
   "engines": {
     "node": ">=16"
   },
-  "license": "Apache-2.0",
   "config": {
     "projectPath": "./tests/testProject",
     "mendixHost": "http://localhost:8080",
@@ -21,16 +53,23 @@
     "build": "pluggable-widgets-tools build:web",
     "lint": "pluggable-widgets-tools lint",
     "lint:fix": "pluggable-widgets-tools lint:fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "prerelease": "npm run lint",
-    "release": "pluggable-widgets-tools release:web"
+    "release": "pluggable-widgets-tools release:web",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^10.15.0"
+    "@mendix/pluggable-widgets-tools": "^10.15.0",
+    "prettier": "^2.8.8"
   },
   "dependencies": {
     "classnames": "^2.2.6",
     "html2canvas": "^1.4.1",
     "react-organizational-chart": "^2.2.1"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "resolutions": {
     "react": "^18.2.0",
@@ -39,5 +78,21 @@
   "overrides": {
     "react": "^18.2.0",
     "react-native": "0.72.7"
+  },
+  "mendix": {
+    "minimumMXVersion": "9.0.0",
+    "supportedPlatforms": [
+      "Web"
+    ]
+  },
+  "marketplace": {
+    "category": "Data Visualization",
+    "tags": [
+      "visualization",
+      "charts",
+      "organization",
+      "hierarchy",
+      "hr"
+    ]
   }
 }

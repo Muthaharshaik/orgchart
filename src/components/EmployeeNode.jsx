@@ -1,7 +1,10 @@
-//This is the visual card for each employee
-import React, {createElement, memo} from "react";
+import React, { createElement, memo } from "react";
 
-// OPTIMIZED: Wrapped in React.memo to prevent unnecessary re-renders
+/**
+ * EmployeeNode Component
+ * Displays individual employee card in the organization chart
+ * Optimized with React.memo to prevent unnecessary re-renders
+ */
 const EmployeeNode = memo(function EmployeeNode({
     employee, 
     showImages, 
@@ -15,50 +18,101 @@ const EmployeeNode = memo(function EmployeeNode({
 }) {
     const directReports = employee.children?.length || 0;
 
+    /**
+     * Handle node click
+     */
     const handleClick = () => {
-        if(onClick) {
-            onClick(employee)
+        if (onClick) {
+            onClick(employee);
         }
-    }
+    };
 
+    /**
+     * Handle keyboard navigation for node
+     */
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+        }
+    };
+
+    /**
+     * Handle collapse/expand toggle
+     */
     const handleCollapseClick = (e) => {
-        e.stopPropagation(); // Prevent node click
+        e.stopPropagation();
         if (onToggleCollapse) {
             onToggleCollapse(employee.id, e);
         }
-    }
+    };
 
-    return(
+    /**
+     * Handle keyboard navigation for collapse button
+     */
+    const handleCollapseKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onToggleCollapse) {
+                onToggleCollapse(employee.id, e);
+            }
+        }
+    };
+
+    /**
+     * Generate initials for placeholder avatar
+     */
+    const getInitials = () => {
+        if (!employee?.name) return '?';
+        return employee.name
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase())
+            .slice(0, 2)
+            .join('');
+    };
+
+    return (
         <div
-           ref={nodeRef}
-           className={`org-chart-node ${isHighlighted ? 'highlighted' : ''} ${showImages ? 'with-image' : 'no-image'} ${isCollapsed ? 'collapsed' : ''}`}
-           onClick={handleClick}
-           role="button"
-           tabIndex={0}
+            ref={nodeRef}
+            className={`org-chart-node ${isHighlighted ? 'highlighted' : ''} ${showImages ? 'with-image' : 'no-image'} ${isCollapsed ? 'collapsed' : ''}`}
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            role="treeitem"
+            tabIndex={0}
+            aria-expanded={hasChildren ? !isCollapsed : undefined}
+            aria-label={`${employee.name}${employee.title ? `, ${employee.title}` : ''}${hasChildren ? `, ${directReports} direct reports` : ''}`}
         >
-            {/* Horizontal layout: Image + Content side by side */}
             <div className="node-inner">
-                {/**Profile Image - Left side*/}
+                {/* Profile Image */}
                 {showImages && (
                     <div className="node-image-container">
                         {employee.profileImage ? (
                             <img 
-                               src={employee.profileImage}
-                               alt={employee.name}
-                               className="node-image"
+                                src={employee.profileImage}
+                                alt={`${employee.name} profile`}
+                                className="node-image"
+                                onError={(e) => {
+                                    // Fallback to placeholder if image fails to load
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'flex';
+                                }}
                             />
-                        ) : (
-                             <div className="node-image-placeholder">
-                                {employee?.name?.split(' ').map(word => word.charAt(0).toUpperCase()).slice(0,2).join('')}
-                             </div>
-                            )
-                        }
+                        ) : null}
+                        {!employee.profileImage && (
+                            <div 
+                                className="node-image-placeholder"
+                                aria-hidden="true"
+                            >
+                                {getInitials()}
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {/**Employee Info - Right side */}
+                {/* Employee Information */}
                 <div className="node-content">
-                    <div className="node-name">{employee.name}</div>
+                    <div className="node-name">{employee.name || 'Unknown'}</div>
                     {employee.title && (
                         <div className="node-title">{employee.title}</div>
                     )}
@@ -66,20 +120,30 @@ const EmployeeNode = memo(function EmployeeNode({
                         <div className="node-department">{employee.department}</div>
                     )}
                     
-                    {/** Show badge only When collapsed */}
+                    {/* Collapse/Expand Badge */}
                     {hasChildren && directReports > 0 && (
-                        <div className="node-badge" onClick={handleCollapseClick} style={{cursor: "pointer"}} title={isCollapsed ? `Expand ${directReports} reports` : `Hide reports`}>
+                        <div 
+                            className="node-badge" 
+                            onClick={handleCollapseClick}
+                            onKeyDown={handleCollapseKeyDown}
+                            role="button"
+                            tabIndex={0}
+                            style={{ cursor: "pointer" }}
+                            title={isCollapsed ? `Expand ${directReports} reports` : `Hide reports`}
+                            aria-label={isCollapsed ? `Expand ${directReports} direct reports` : `Collapse ${directReports} direct reports`}
+                        >
                             {isCollapsed
-                             ? `Show ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
-                             : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`}
+                                ? `Show ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
+                                : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
+                            }
                         </div>
                     )}
                 </div>
             </div>
         </div>
-    )
+    );
 }, (prevProps, nextProps) => {
-    // OPTIMIZED: Custom comparison function for memo
+    // Custom comparison function for React.memo
     // Only re-render if these specific props change
     return (
         prevProps.employee.id === nextProps.employee.id &&
