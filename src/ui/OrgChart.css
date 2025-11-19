@@ -496,7 +496,6 @@
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin: 0 auto;
-    /* text-align: center; */
 }
 
 .org-chart-node:hover {
@@ -510,10 +509,10 @@
 }
 
 /* Highlighted state (search result) */
-.org-chart-node.highlighted {
+/* .org-chart-node.highlighted {
     background-color: lightgray;
     box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4);
-}
+} */
 
 /* NEW: Collapsed state */
 .org-chart-node.collapsed {
@@ -524,6 +523,18 @@
 .org-chart-node.collapsed:hover {
     border-color: #0078d4;
     background-color: white;
+}
+
+/* Highlighted state (search result) - IMPORTANT: This must come AFTER collapsed */
+.org-chart-node.highlighted {
+    background-color: lightgray !important;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4) !important;
+}
+
+/* More specific rule: highlighted AND collapsed */
+.org-chart-node.highlighted.collapsed {
+    background-color: lightgray !important;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4) !important;
 }
 
 .node-inner {

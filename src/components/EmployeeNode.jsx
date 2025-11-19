@@ -1,7 +1,18 @@
 //This is the visual card for each employee
-import React, {createElement} from "react";
+import React, {createElement, memo} from "react";
 
-export default function EmployeeNode({employee, showImages, showDepartment, onClick, isHighlighted = false, nodeRef, isCollapsed = false, hasChildren = false, onToggleCollapse }) {
+// OPTIMIZED: Wrapped in React.memo to prevent unnecessary re-renders
+const EmployeeNode = memo(function EmployeeNode({
+    employee, 
+    showImages, 
+    showDepartment, 
+    onClick, 
+    isHighlighted = false, 
+    nodeRef, 
+    isCollapsed = false, 
+    hasChildren = false, 
+    onToggleCollapse 
+}) {
     const directReports = employee.children?.length || 0;
 
     const handleClick = () => {
@@ -60,10 +71,28 @@ export default function EmployeeNode({employee, showImages, showDepartment, onCl
                         <div className="node-badge" onClick={handleCollapseClick} style={{cursor: "pointer"}} title={isCollapsed ? `Expand ${directReports} reports` : `Hide reports`}>
                             {isCollapsed
                              ? `Show ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
-                             : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`}                            </div>
+                             : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`}
+                        </div>
                     )}
                 </div>
             </div>
         </div>
     )
-}
+}, (prevProps, nextProps) => {
+    // OPTIMIZED: Custom comparison function for memo
+    // Only re-render if these specific props change
+    return (
+        prevProps.employee.id === nextProps.employee.id &&
+        prevProps.isHighlighted === nextProps.isHighlighted &&
+        prevProps.isCollapsed === nextProps.isCollapsed &&
+        prevProps.showImages === nextProps.showImages &&
+        prevProps.showDepartment === nextProps.showDepartment &&
+        prevProps.hasChildren === nextProps.hasChildren &&
+        prevProps.employee.name === nextProps.employee.name &&
+        prevProps.employee.title === nextProps.employee.title &&
+        prevProps.employee.department === nextProps.employee.department &&
+        prevProps.employee.profileImage === nextProps.employee.profileImage
+    );
+});
+
+export default EmployeeNode;

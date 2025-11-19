@@ -52,7 +52,7 @@
             </property>
 
             <property key="profileImage" type="attribute" dataSource="employeeEntity" required="false">
-                <caption>Profile Image</caption>
+                <caption>Profile Image (optional)</caption>
                 <description>Reference to the profile image</description>
                 <attributeTypes>
                     <attributeType name="String"/> <!-- URL -->

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, createElement} from "react";
+import React, {useState, useEffect, useRef, createElement, useCallback} from "react";
 import { Tree, TreeNode } from "react-organizational-chart";
 import EmployeeNode from "./components/EmployeeNode";
 import { buildHierarchy, searchEmployees } from "./utils/dataTransformer";
@@ -96,6 +96,39 @@ export default function OrgChart(props) {
         }
     }, [hierarchyData]);
 
+    /**
+     * Expand path to a specific node (used for search)
+     */
+    const expandPathToNode = useCallback((targetNodeId) => {
+        if (!hierarchyData) return;
+        
+        const pathNodes = [];
+        
+        const findPath = (node, target, path=[]) => {
+            if (node.id === target) {
+                pathNodes.push(...path)
+                return true;
+            }
+            
+            if (node.children) {
+                for(const child of node.children) {
+                    if (findPath(child, target, [...path, node.id])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        findPath(hierarchyData, targetNodeId);
+        
+        setCollapsedNodes(prev => {
+            const newSet = new Set(prev);
+            pathNodes.forEach(nodeId => newSet.delete(nodeId));
+            return newSet;
+        })
+    }, [hierarchyData]);
+
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -134,16 +167,16 @@ export default function OrgChart(props) {
     /**
      * Handle node click - triggers Mendix Action
     */
-    const handleNodeClick = (employee) => {
+    const handleNodeClick = useCallback((employee) => {
         if (onNodeClick && onNodeClick.canExecute) {
             onNodeClick.execute()
         }
-    }
+    }, [onNodeClick]);
 
     /**
-     * Toggle collapse state for a node
+     *Toggle collapse state for a node
      */
-    const handleToggleCollapse = (nodeId, event) => {
+    const handleToggleCollapse = useCallback((nodeId, event) => {
         if(event) {
            event.stopPropagation();
         }
@@ -156,13 +189,12 @@ export default function OrgChart(props) {
             }
             return newSet
         })
-    }
-
+    }, []);
 
     /**
-     *This function is used to collapse all the children except CEO
+     *Collapse all the children except CEO
      */
-    const handleCollapseAll = () => {
+    const handleCollapseAll = useCallback(() => {
         if (!hierarchyData) return;
         const allNodeIds = new Set();
         const collectNodeIds = (node) => {
@@ -173,60 +205,25 @@ export default function OrgChart(props) {
         }
         collectNodeIds(hierarchyData);
         setCollapsedNodes(allNodeIds)
-    }
+    }, [hierarchyData]);
 
     /**
-     * This function is expand all the nodes by creating an empty set
+     * Expand all the nodes by creating an empty set
      */
-    const handleExpandAll = () => {
+    const handleExpandAll = useCallback(() => {
         setCollapsedNodes(new Set());
-    }
+    }, []);
 
     /**
-     * This function is used to expand path to a specific node which is used for search
-     */
-    const expandPathToNode = (targetNodeId) => {
-        if (!hierarchyData) return;
-        //This will store the parents of the searched Node
-        const pathNodes = [];
-        //Recursive function which will try to reach the searched employee starting from CEO
-        const findPath = (node, target, path=[]) => {
-            //path refers to the nodes visited so far
-            //if we found the searched node then we will push that path in the pathNodes array
-            if (node.id === target) {
-                pathNodes.push(...path)
-                return true;
-            }
-            //else we will go deep to find the path
-            if (node.children) {
-                for(const child of node.children) {
-                    if (findPath(child,target, [...path, node.id])) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        findPath(hierarchyData, targetNodeId);
-        //Now remove the path nodes from the collapsed nodes
-        setCollapsedNodes(prev => {
-            const newSet = new Set(prev);
-            pathNodes.forEach(nodeId => newSet.delete(nodeId));
-            return newSet;
-        })
-    }
-
-    /**
-     * Handle Search input change
+     *Handle Search input change
     */
-    const handleSearch = (event) => {
+    const handleSearch = useCallback((event) => {
         const term = event.target.value;
         setSearchTerm(term);
 
         if(term && hierarchyData) {
             setIsSearching(true);
             
-            // Simulate slight delay for smoother UX (optional)
             setTimeout(() => {
                 const results = searchEmployees(hierarchyData, term);
                 setSearchResults(results);
@@ -236,7 +233,6 @@ export default function OrgChart(props) {
                 if(results.length > 0) {
                     setCurrentResultIndex(0);
                     setHighlightedNode(results[0].id);
-                    //Expand path to show the search result
                     expandPathToNode(results[0].id);
                 } else {
                     setHighlightedNode(null);
@@ -248,70 +244,69 @@ export default function OrgChart(props) {
             setShowSearchDropdown(false);
             setIsSearching(false);
         }
-    }
+    }, [hierarchyData, expandPathToNode]);
 
     /**
      * Select result from dropdown
      */
-    const handleSelectResult = (result, index) => {
+    const handleSelectResult = useCallback((result, index) => {
         setCurrentResultIndex(index);
         setHighlightedNode(result.id);
         setShowSearchDropdown(false);
-        //Expand path to show this result
         expandPathToNode(result.id);
-    }
+    }, [expandPathToNode]);
 
     /**
-     * Navigation functions
+     *  Navigation functions
      */
-    const handleNextResult = () => {
+    const handleNextResult = useCallback(() => {
         if (searchResults.length === 0) return;
         const nextIndex = (currentResultIndex + 1) % searchResults.length;
         setCurrentResultIndex(nextIndex);
         setHighlightedNode(searchResults[nextIndex].id);
         expandPathToNode(searchResults[nextIndex].id);
-    }
+    }, [searchResults, currentResultIndex, expandPathToNode]);
 
-    const handlePrevResult = () => {
+    const handlePrevResult = useCallback(() => {
         if (searchResults.length === 0) return;
         const prevIndex = currentResultIndex === 0 ? searchResults.length - 1 : currentResultIndex - 1;
         setCurrentResultIndex(prevIndex);
         setHighlightedNode(searchResults[prevIndex].id);
         expandPathToNode(searchResults[prevIndex].id);
-    }
+    }, [searchResults, currentResultIndex, expandPathToNode]);
 
     /**
      * Get hierarchy path helper
      */
-    const getHierarchyPath = (employee) => {
+    const getHierarchyPath = useCallback((employee) => {
         if (employee.department) {
             return employee.department;
         }
         return 'Organization';
-    }
+    }, []);
 
     /**
      * Handle zoom in, zoom out and Reset Zoom
      */
-    const handleZoomIn = () => {
+    const handleZoomIn = useCallback(() => {
         setZoomLevel(prev => Math.min(prev + 0.1, 1.5));
-    }
+    }, []);
 
-    const handleZoomOut = () => {
+    const handleZoomOut = useCallback(() => {
         setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
-    }
+    }, []);
 
-    const handleZoomReset = () => {
+    const handleZoomReset = useCallback(() => {
         setZoomLevel(0.8)
         setSearchTerm('')
         setHighlightedNode(null)
-    }
+    }, []);
+
     // Auto-scroll to center when zoom changes
     useEffect(() => {
        if (chartRef.current) {
         const wrapper = chartRef.current;
         
-        // Small delay to let the transform complete
         setTimeout(() => {
             const scrollWidth = wrapper.scrollWidth;
             const clientWidth = wrapper.clientWidth;
@@ -321,27 +316,25 @@ export default function OrgChart(props) {
             const centerScrollLeft = (scrollWidth - clientWidth) / 2;
             const centerScrollTop = Math.max(0, (scrollHeight - clientHeight) / 2);
             
-            // Smooth scroll to center
             wrapper.scrollTo({
                 left: centerScrollLeft,
-                // behavior:'smooth'
             });
         }, 50);
     }
-}, [zoomLevel, hierarchyData]);
+}, [zoomLevel, hierarchyData, handleExpandAll]);
 
-    const handleRemove = () => {
+    const handleRemove = useCallback(() => {
         setSearchTerm('');
         setHighlightedNode(null);
         setSearchResults([]);
         setCurrentResultIndex(0);
         setShowSearchDropdown(false);
-    }
+    }, []);
 
     /**
      * Export chart as PNG
      */
-    const handleExport = () => {
+    const handleExport = useCallback(() => {
         if (!chartRef.current) return;
 
         html2canvas(chartRef.current, {
@@ -355,20 +348,19 @@ export default function OrgChart(props) {
         }).catch(error => {
             console.error('Export failed:', error);
         });
-    };
-
-
-    /** TODO: To collapse all the nodes initially */
+    }, []);
 
     /**
-     * Recursively render the org chart tree
+     * OPTIMIZED: Recursively render the org chart tree
+     * useMemo prevents unnecessary re-renders of the entire tree
      */
-    const renderTree = (node) => {
+    const renderTree = useCallback((node) => {
         if(!node) return null;
         
         const isHighlighted = highlightedNode === node.id;
         const isCollapsed = collapsedNodes.has(node.id);
         const hasChildren = node.children && node.children.length > 0;        
+        
         return(
             <TreeNode
                 key={node.id}
@@ -394,7 +386,7 @@ export default function OrgChart(props) {
                 }
             </TreeNode>
         )
-    }
+    }, [highlightedNode, collapsedNodes, showImages, showDepartment, handleNodeClick, handleToggleCollapse]);
 
     //MAIN RENDER
     if (!employeeEntity || employeeEntity.status === 'loading') {
@@ -593,10 +585,9 @@ export default function OrgChart(props) {
                 <div
                 style={{
                             transform: `scale(${zoomLevel})`,
-                            transformOrigin: 'left top', //changed from left top
+                            transformOrigin: 'left top',
                             transition: 'transform 0.2s ease',
                             display: 'inline-block',
-                            // padding: `${Math.max(0, (zoomLevel - 1) * 100)}%`,
                             minWidth: '100%'}}
                 >
                     <Tree
@@ -612,7 +603,6 @@ export default function OrgChart(props) {
                                     onClick={handleNodeClick}
                                     isHighlighted={highlightedNode === hierarchyData.id}
                                     nodeRef={highlightedNode === hierarchyData.id ? highlightedNodeRef : null}
-                                    // Root node collapse props
                                     isCollapsed={collapsedNodes.has(hierarchyData.id)}
                                     hasChildren={hierarchyData.children && hierarchyData.children.length > 0}
                                     onToggleCollapse={handleToggleCollapse}
