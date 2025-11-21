@@ -184,8 +184,8 @@ export default function OrgChart(props) {
      */
     const handleNodeClick = useCallback((employee) => {
     try {
-            if (onNodeClick && onNodeClick.canExecute) {
-                onNodeClick.execute();
+            if (onNodeClick && onNodeClick.canExecute && employee.mendixObject) {
+                onNodeClick.execute({mendixObject: employee.mendixObject});
         }
     } catch (err) {
             // Silent fail - action execution errors are handled by Mendix
