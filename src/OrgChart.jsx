@@ -13,17 +13,14 @@ export default function OrgChart(props) {
         managerId,
         employeeName,
         employeeTitle,
-        profileImage,
         department,
         email,
         phoneNumber,
-        showImages,
         showDepartment,
         onNodeClick,
         enableExport
     } = props;
 
-    console.info(props)
     // State management
     const [hierarchyData, setHierarchyData] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -73,7 +70,6 @@ export default function OrgChart(props) {
                         managerId: stringManagerId,
                         name: employeeName.get(item).value || 'Unknown',
                         title: employeeTitle?.get(item).value || '',
-                        profileImage: profileImage?.get(item).value || '',
                         department: department?.get(item).value || '',
                         email: email?.get(item).value || '',
                         phone: phoneNumber?.get(item).value || '',
@@ -92,7 +88,7 @@ export default function OrgChart(props) {
         } catch (err) {
             setError('Error processing employee data: ' + err.message);
         }
-    }, [employeeEntity, employeeId, managerId, employeeName, employeeTitle, profileImage, department, email, phoneNumber]);
+    }, [employeeEntity, employeeId, managerId, employeeName, employeeTitle, department, email, phoneNumber]);
 
     // Initial centering when hierarchy data loads
     useEffect(() => {
@@ -187,14 +183,15 @@ export default function OrgChart(props) {
      * Handle node click - triggers Mendix Action
      */
     const handleNodeClick = useCallback((employee) => {
-        try {
+    try {
             if (onNodeClick && onNodeClick.canExecute) {
                 onNodeClick.execute();
-            }
-        } catch (err) {
-            // Silent fail - action execution errors are handled by Mendix
         }
+    } catch (err) {
+            // Silent fail - action execution errors are handled by Mendix
+    }
     }, [onNodeClick]);
+
 
     /**
      * Toggle collapse state for a node
@@ -399,7 +396,6 @@ export default function OrgChart(props) {
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <EmployeeNode
                             employee={node}
-                            showImages={showImages}
                             showDepartment={showDepartment}
                             onClick={handleNodeClick}
                             isHighlighted={isHighlighted}
@@ -416,7 +412,7 @@ export default function OrgChart(props) {
                 }
             </TreeNode>
         );
-    }, [highlightedNode, collapsedNodes, showImages, showDepartment, handleNodeClick, handleToggleCollapse]);
+    }, [highlightedNode, collapsedNodes, showDepartment, handleNodeClick, handleToggleCollapse]);
 
     // Loading state
     if (!employeeEntity || employeeEntity.status === 'loading') {
@@ -528,13 +524,9 @@ export default function OrgChart(props) {
                                             }}
                                         >
                                             <div className="result-avatar">
-                                                {result.profileImage ? (
-                                                    <img src={result.profileImage} alt={result.name} />
-                                                ) : (
                                                     <div className="result-avatar-placeholder">
                                                         {result.name?.split(' ').map(w => w.charAt(0).toUpperCase()).slice(0, 2).join('')}
                                                     </div>
-                                                )}
                                             </div>
                                             <div className="result-info">
                                                 <div className="result-name">{result.name}</div>
@@ -669,7 +661,6 @@ export default function OrgChart(props) {
                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <EmployeeNode
                                         employee={hierarchyData}
-                                        showImages={showImages}
                                         showDepartment={showDepartment}
                                         onClick={handleNodeClick}
                                         isHighlighted={highlightedNode === hierarchyData.id}

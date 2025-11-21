@@ -13,7 +13,6 @@ A powerful and feature-rich organization chart widget for Mendix applications th
 - **Export Capability**: Export charts as PNG images for documentation
 
 ### Customization Options
-- **Profile Images**: Show/hide employee profile pictures with automatic placeholder initials
 - **Department Display**: Toggle department information visibility
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Accessible**: Full keyboard navigation and screen reader support
@@ -41,9 +40,7 @@ The widget requires a data source with the following attributes:
 | Manager ID | String/AutoNumber | Yes | Reference to the employee's manager (self-reference) |
 | Employee Name | String | Yes | Full name of the employee |
 | Job Title | String | No | Employee's job title |
-| Profile Image | String (URL) | No | URL to employee profile image |
 | Department | String | No | Department name |
-| Email | String | No | Employee email address |
 
 ### Setup Steps
 
@@ -55,8 +52,6 @@ The widget requires a data source with the following attributes:
    - Name (String)
    - Title (String)
    - Department (String)
-   - Email (String)
-   - ProfileImageURL (String)
    ```
 
 2. **Configure the Widget**
@@ -65,7 +60,6 @@ The widget requires a data source with the following attributes:
    - Map the required attributes to your entity attributes
 
 3. **Configure Display Options**
-   - Toggle "Show Profile Images" to display/hide photos
    - Toggle "Show Department" to display/hide department info
    - Enable "Export (PNG/PDF)" to allow chart export
 
@@ -195,10 +189,6 @@ The widget is built with accessibility in mind:
 
 ## Support
 
-For issues, questions, or feature requests, please contact:
-- **Email**: [your-email@example.com]
-- **Documentation**: [link-to-docs]
-- **GitHub**: [link-to-repo] (if applicable)
 
 ## License
 
@@ -206,7 +196,7 @@ For issues, questions, or feature requests, please contact:
 
 ## Credits
 
-Developed by [Your Company/Name]
+Developed by [Lowcode Labs/Muthahar Shaik]
 
 Built with:
 - React

@@ -6,19 +6,10 @@
   "copyright": "© 2024 Muthahar Shaik (LowCodeLabs). All rights reserved.",
   "author": {
     "name": "Muthahar Shaik",
-    "email": "your.email@example.com",
-    "url": "https://lowcodelabs.com"
+    "email": "muthahar@lowcodelabs.in",
+    "url": "https://lowcodelabs.in"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/yourusername/mendix-orgchart-widget#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/mendix-orgchart-widget.git"
-  },
-  "bugs": {
-    "url": "https://github.com/yourusername/mendix-orgchart-widget/issues",
-    "email": "your.email@example.com"
-  },
   "keywords": [
     "mendix",
     "widget",

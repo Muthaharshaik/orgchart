@@ -1,140 +1,86 @@
-import React, { createElement, memo } from "react";
+import React, {createElement, memo } from "react";
 
 /**
- * EmployeeNode Component
- * Displays individual employee card in the organization chart
- * Optimized with React.memo to prevent unnecessary re-renders
+ * EmployeeNode Component (Profile removed)
  */
 const EmployeeNode = memo(function EmployeeNode({
-    employee, 
-    showImages, 
-    showDepartment, 
-    onClick, 
-    isHighlighted = false, 
-    nodeRef, 
-    isCollapsed = false, 
-    hasChildren = false, 
-    onToggleCollapse 
+    employee,
+    showDepartment,
+    onClick,
+    isHighlighted = false,
+    nodeRef,
+    isCollapsed = false,
+    hasChildren = false,
+    onToggleCollapse
 }) {
     const directReports = employee.children?.length || 0;
 
-    /**
-     * Handle node click
-     */
-    const handleClick = () => {
-        if (onClick) {
-            onClick(employee);
-        }
-    };
+    /** Handle node click */
+    const handleClick = () => onClick && onClick(employee);
 
-    /**
-     * Handle keyboard navigation for node
-     */
+    /** Keyboard navigation */
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleClick();
         }
     };
 
-    /**
-     * Handle collapse/expand toggle
-     */
-    const handleCollapseClick = (e) => {
+    /** Toggle collapse */
+    const toggleCollapse = (e) => {
         e.stopPropagation();
-        if (onToggleCollapse) {
-            onToggleCollapse(employee.id, e);
-        }
+        onToggleCollapse && onToggleCollapse(employee.id, e);
     };
 
-    /**
-     * Handle keyboard navigation for collapse button
-     */
-    const handleCollapseKeyDown = (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            e.stopPropagation();
-            if (onToggleCollapse) {
-                onToggleCollapse(employee.id, e);
-            }
-        }
-    };
-
-    /**
-     * Generate initials for placeholder avatar
-     */
+    /** Get initials for avatar placeholder */
     const getInitials = () => {
-        if (!employee?.name) return '?';
+        if (!employee?.name) return "?";
         return employee.name
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase())
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase())
             .slice(0, 2)
-            .join('');
+            .join("");
     };
 
     return (
         <div
             ref={nodeRef}
-            className={`org-chart-node ${isHighlighted ? 'highlighted' : ''} ${showImages ? 'with-image' : 'no-image'} ${isCollapsed ? 'collapsed' : ''}`}
+            className={`org-chart-node ${isHighlighted ? "highlighted" : ""}`}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             role="treeitem"
             tabIndex={0}
             aria-expanded={hasChildren ? !isCollapsed : undefined}
-            aria-label={`${employee.name}${employee.title ? `, ${employee.title}` : ''}${hasChildren ? `, ${directReports} direct reports` : ''}`}
+            aria-label={`${employee.name}${employee.title ? `, ${employee.title}` : ""}${hasChildren ? `, ${directReports} direct reports` : ""}`}
         >
             <div className="node-inner">
-                {/* Profile Image */}
-                {showImages && (
-                    <div className="node-image-container">
-                        {employee.profileImage ? (
-                            <img 
-                                src={employee.profileImage}
-                                alt={`${employee.name} profile`}
-                                className="node-image"
-                                onError={(e) => {
-                                    // Fallback to placeholder if image fails to load
-                                    e.target.style.display = 'none';
-                                    e.target.nextSibling.style.display = 'flex';
-                                }}
-                            />
-                        ) : null}
-                        {!employee.profileImage && (
-                            <div 
-                                className="node-image-placeholder"
-                                aria-hidden="true"
-                            >
-                                {getInitials()}
-                            </div>
-                        )}
-                    </div>
-                )}
+                
+                {/* 👇 Always show placeholder initials */}
+                <div className="node-image-placeholder" aria-hidden="true">
+                    {getInitials()}
+                </div>
 
-                {/* Employee Information */}
+                {/* Employee details */}
                 <div className="node-content">
-                    <div className="node-name">{employee.name || 'Unknown'}</div>
-                    {employee.title && (
-                        <div className="node-title">{employee.title}</div>
-                    )}
+                    <div className="node-name">{employee.name || "Unknown"}</div>
+                    {employee.title && <div className="node-title">{employee.title}</div>}
                     {showDepartment && employee.department && (
                         <div className="node-department">{employee.department}</div>
                     )}
-                    
-                    {/* Collapse/Expand Badge */}
+
+                    {/* Manage expand/collapse */}
                     {hasChildren && directReports > 0 && (
-                        <div 
-                            className="node-badge" 
-                            onClick={handleCollapseClick}
-                            onKeyDown={handleCollapseKeyDown}
+                        <div
+                            className="node-badge"
+                            onClick={toggleCollapse}
+                            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleCollapse(e)}
                             role="button"
                             tabIndex={0}
-                            style={{ cursor: "pointer" }}
                             title={isCollapsed ? `Expand ${directReports} reports` : `Hide reports`}
-                            aria-label={isCollapsed ? `Expand ${directReports} direct reports` : `Collapse ${directReports} direct reports`}
                         >
                             {isCollapsed
-                                ? `Show ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
-                                : `Hide ${directReports} ${directReports === 1 ? 'Report' : 'Reports'}`
+                                ? `Show ${directReports} ${directReports === 1 ? "Report" : "Reports"}`
+                                : `Hide ${directReports} ${directReports === 1 ? "Report" : "Reports"}`
                             }
                         </div>
                     )}
@@ -142,21 +88,17 @@ const EmployeeNode = memo(function EmployeeNode({
             </div>
         </div>
     );
-}, (prevProps, nextProps) => {
-    // Custom comparison function for React.memo
-    // Only re-render if these specific props change
-    return (
-        prevProps.employee.id === nextProps.employee.id &&
-        prevProps.isHighlighted === nextProps.isHighlighted &&
-        prevProps.isCollapsed === nextProps.isCollapsed &&
-        prevProps.showImages === nextProps.showImages &&
-        prevProps.showDepartment === nextProps.showDepartment &&
-        prevProps.hasChildren === nextProps.hasChildren &&
-        prevProps.employee.name === nextProps.employee.name &&
-        prevProps.employee.title === nextProps.employee.title &&
-        prevProps.employee.department === nextProps.employee.department &&
-        prevProps.employee.profileImage === nextProps.employee.profileImage
-    );
-});
+},
+// ✔ Memo props (removed profile related props)
+(prev, next) =>
+    prev.employee.id === next.employee.id &&
+    prev.isHighlighted === next.isHighlighted &&
+    prev.isCollapsed === next.isCollapsed &&
+    prev.showDepartment === next.showDepartment &&
+    prev.hasChildren === next.hasChildren &&
+    prev.employee.name === next.employee.name &&
+    prev.employee.title === next.employee.title &&
+    prev.employee.department === next.employee.department
+);
 
 export default EmployeeNode;

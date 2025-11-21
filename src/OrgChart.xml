@@ -3,23 +3,23 @@
         supportedPlatform="Web"
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
-    <name>Organization-Chart</name>
-    <description>This widget is an organization chart</description>
-    <icon/>
+    <name>Organization Chart</name>
+    <description>A powerful and feature-rich organization chart widget that visualizes hierarchical employee structures with an intuitive, interactive interface</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAADsAAAA7AF5KHG9AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABm9JREFUWIW1lmtsVMcZhp85c85e2bUX29gYE2zCJYCT0krcKTEoTaCkSlpiRPMjbdO0Ulu1qsEmjTHqUViclDVJJRcliCo/kgpHIKUhqRBR04ZKFXFRIA2XoibBtSkBgwFf93L2XKY/7KXGpsUO5Ps1O/POe56Znfnmg9uI+qfqi+t+WHf37XiI8U4wf2pG9YD+cyXUD4Ay13WxslZP1s7+LUDg+9tf3v7ZFwYQr4lPUYY6BFTG8sIsnD+daEDn6IkO2s530dPb02/4jarErsTxsXpqYxUqlFCG2gtUSqlR/fBCKmdP5a5pJXxjxRyCQR/RaDRipa33qqur5R0HaHy68evACoD8aIhIODg0ItB1nbKifAzdQBoyWl5Ybt5xAKXU6ly7fyCN43jXxzzP5dK1fgCC/iC2az96xwE85U3LtbOO4q+nLw2C2Tb/uKpIWoNAmqahPDVprL76WIVCiB4AEZuMsbSaU4EIbe0XCMssneFyulYuJ+/MQby2oyhUz1h9x7wDAvFHAP3eVYhABIBUpJSuUDlSg4IJOtdmPYht2xjSOHzHAfye/w3gXyIUvel4UILjeqSttJ31ZevuOEBdU11SIDbg4d1UIEBkUwQDwe80Nzf3jdV33Jnw+ZYP1opY6WsiVhIb3q+6O7t7ktYzz62r2D0ev3ED5CK+t3W5lIGVuK7f1b23GtYvOPp5fMYFYJpmSEtqxzSh+W42rlD9DTsaviwQ6gsBADDrzBIkIQAjYIQA7IydAsBhwGwyL4/X83NHy56W+pY9LfW34zFqB/a9sq/IcZ0XBeKm2zw8lFLzAIQQp2+pRWV1qdesf3J91/D+UZnQ9uwKDW2REGLMKxNC7L+lSNFoe3YF8P8BpCeVEurahqc23NK0ZU/LXIAxamulJ0cdzlEAaSN90p/1b7qVIYAnvdfGogNQntqU8WVOjuy/4Qxsr91eqaRanbWz5VbG6g+Ggi/e7FQrlIjXxR/ylLfYcZ2CdCZ9ruNKxwv79+93R2oTtYmwpVmPOTjzbMv2Z7KZ93a+tPPNGwAUSmzbvO0FgfhZaXFMm15WwEf/PM+Fzq4BpVRN4qXEb3MTGp9pLHBd94AQYtmcGaXkhXwc+aiN3r7eC5rSqhK7E5/ktPHN8cUK9WYgYBRXzpxCOmVx/Ey7SqaTrXm785abmJ4EMJ42NgK/LCnKF99+ZAllpYXMnJzPqbOXfalUavXSBUvfeP/Y+10AVcuq3gKqlnxlBquWzaNs8kRKJ4Y5e747kswkH2s93rpzCLTIU14rUFi9dhH33nMXFaUTSaYscbUnNXVg/sD81mOtr2umaWpKqV8AFBVEEGLwXwn6DQBC4ZDPw9sF8Gzts4tQPABQWDD4JAspyQsH0DQNQzcm1/6o9nsAruv+GIgN+g6+oJquMbU4RsAfQLlqjVll6ppMyruBIoCO81ewHReUoi+ZBsDn8+E6bu6+L85tb1v74G3ybJt/Xx6sPwzDwHO9NUOS69qzHYPVk2s5nDx7cRBGar7Ufamv6q50belJnMIQ7Y/MZrtxlbl9HofL4dPHp/LA3nMIIbIASihbIMhUFvGXVaWc7r1EkYK3F/jwhyZxz8EOFCo19F1HCRh4cAavzvEzvesi/WHBoXWTuO8dB/+H3ShX9Wrm82a7QHyaXDENuyxKqjjMBzMjTIhFsKdGOV+qIzV5BECX+rsAfWtn4caCXCqfwKmKCVRMLODYl0JYlqWkT746dFXedcqipBZPwckL8PGMKBcnR5hdVMzhlTFc100mdiWOawBKqRoVHF0e5ms+7IyVsv32TwDqn6v/GKHtUoHR2qA08JQ60fSbpj8DuGF3jxv1dYzUBYQk+tkAhm78GoYqoq2JrX/Q+q1mkXFuyFQF3U7fwMIp32pubr6ePt2gvdH45Orf8YZJPcWsK5wlrJbkukzTTKnC6KN658CNBWrGVpG8vLebXm5qgBGJqObIvomBbuu7btgoEensn3615ol3Ri11KDYd/N1cqYsNCFwsd9+Oh58487+09Yda1joBcT+2fc7V5es7Vz5+JTd2HWDb5m0HBKJy1GyP2oamht9fX1mdWSKFPCwQxnCZQtmart2/pXHLpVxfvC6+DsGOkZYKdWLrjq3fhGFvgZTyyazK5o0CCHFu+E8zYXbGN8a/5vicGwD0rG5v2fHfjwM4YecAGT4caekTvt5c+z+nVpSLseGqNwAAAABJRU5ErkJggg==</icon>
     <properties>
         <!--Data Source Configuration-->
         <propertyGroup caption="Data Source">
             <property key="employeeEntity" type="datasource" required="true" isList='true'>
-                <caption>Employee Data Source</caption>
-                <description>Select the data source containing your employee/organization data. Must include employee ID, manager ID, and name fields at minimum.</description>
+                <caption>Data Source</caption>
+                <description>Select the data source containing your employee/organization data.</description>
             </property>
         </propertyGroup>
     
         <!--Data Source attribute configurations-->
-        <propertyGroup caption="Required Attributes">
+        <propertyGroup caption="Attributes">
             <property key="employeeId" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Employee ID</caption>
-                <description>Unique identifier for each employee. Must be unique across all employees in the organization. Accepts String or AutoNumber types.</description>
+                <description>Unique identifier for each employee.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                     <attributeType name="AutoNumber"/>
@@ -28,7 +28,7 @@
             
             <property key="managerId" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Manager/Parent ID</caption>
-                <description>Reference to the employee's direct manager using their Employee ID. Leave empty or use self-reference for the top-level employee (CEO/President). This creates the hierarchical relationship.</description>
+                <description>Unique Parent ID of the Node/employee.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                     <attributeType name="AutoNumber"/>
@@ -37,59 +37,26 @@
 
             <property key="employeeName" type="attribute" dataSource="employeeEntity" required="true">
                 <caption>Employee Name</caption>
-                <description>Full name of the employee to be displayed on the organization chart node.</description>
+                <description>Full name of the employee.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
-        </propertyGroup>
 
-        <!--Optional Attributes-->
-        <propertyGroup caption="Optional Attributes">
-            <property key="employeeTitle" type="attribute" dataSource="employeeEntity">
+            <property key="employeeTitle" type="attribute" dataSource="employeeEntity" required="false">
                 <caption>Job Title</caption>
-                <description>Employee's job title or position (e.g., "Software Engineer", "Senior Manager"). Displayed below the employee name.</description>
+                <description>Employee's job title or position.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
             </property>
 
-            <property key="profileImage" type="attribute" dataSource="employeeEntity" required="false">
-                <caption>Profile Image</caption>
-                <description>Employee's profile image. Supports: 1) String URL (e.g., "https://...image.jpg"), 2 Dynamic Image object (System.Image or custom image entity), or 3 Path to image in related entity. If not provided, initials will be shown.</description>
-                <attributeTypes>
-                    <attributeType name="String"/>
-                    <attributeType name="Binary"/>
-                </attributeTypes>
-            </property>
-
-            <property key="department" type="attribute" dataSource="employeeEntity">
+            <property key="department" type="attribute" dataSource="employeeEntity" required="false">
                 <caption>Department</caption>
-                <description>Employee's department or team name (e.g., "Engineering", "Sales", "HR"). Shown as a badge on the node card.</description>
+                <description>Employee's department or team name.</description>
                 <attributeTypes>
                     <attributeType name="String"/>
                 </attributeTypes>
-            </property>
-
-            <property key="email" type="attribute" dataSource="employeeEntity">
-                <caption>Email Address</caption>
-                <description>Employee's email address. Currently stored but not displayed. Can be used in custom actions.</description>
-                <attributeTypes>
-                    <attributeType name="String"/>
-                </attributeTypes>
-            </property>
-        </propertyGroup>
-
-        <!-- Layout & Display Options-->
-        <propertyGroup caption="Display Options">
-            <property key="showImages" type="boolean" defaultValue="true">
-                <caption>Show Profile Images</caption>
-                <description>Toggle visibility of employee profile images. When disabled, only text information is shown. Initials are displayed if no image is provided.</description>
-            </property>
-
-            <property key="showDepartment" type="boolean" defaultValue="true">
-                <caption>Show Department</caption>
-                <description>Toggle visibility of department information on employee cards. Department appears as a badge below the job title.</description>
             </property>
         </propertyGroup>
 
@@ -97,12 +64,17 @@
         <propertyGroup caption="Interactions">
             <property key="onNodeClick" type="action">
                 <caption>On Node Click Action</caption>
-                <description>Action to execute when an employee node is clicked. Use this to open detail pages, show popups, or trigger workflows. The clicked employee's context is available.</description>
+                <description>Action to execute when an employee node is clicked.</description>
             </property>
 
-            <property key="enableExport" type="boolean" defaultValue="false">
+            <property key="enableExport" type="boolean" defaultValue="true">
                 <caption>Enable Export (PNG)</caption>
-                <description>Show the "Export PNG" button in the toolbar. Allows users to download the current organization chart view as a PNG image for reports and documentation.</description>
+                <description>Show the "Export PNG" button in the toolbar. Allows users to download the current organization chart view as a PNG image.</description>
+            </property>
+
+            <property key="showDepartment" type="boolean" defaultValue="false">
+                <caption>Show Department</caption>
+                <description>Toggle visibility of department information on employee cards.</description>
             </property>
         </propertyGroup>
     </properties>
