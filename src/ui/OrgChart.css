@@ -826,11 +826,40 @@
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 
+/* ==================== ENHANCED RESPONSIVE DESIGN FIXES ==================== */
+
+/* Tablet and smaller screens */
 @media (max-width: 1024px) {
     .org-chart-toolbar {
-        gap: 12px;
+        gap: 10px;
+        padding: 12px 16px;
     }
 
+    /* Make export button smaller */
+    .export-button {
+        padding: 8px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* Adjust zoom controls */
+    .toolbar-zoom {
+        gap: 6px;
+        padding: 4px 6px;
+    }
+
+    .zoom-button {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+
+    .zoom-level {
+        min-width: 45px;
+        font-size: 13px;
+    }
+
+    /* Collapse controls order */
     .toolbar-collapse {
         order: 3;
         flex: 1 1 100%;
@@ -839,57 +868,275 @@
     }
 }
 
+/* Mobile devices */
 @media (max-width: 768px) {
     .org-chart-toolbar {
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
+        padding: 12px;
     }
 
+    /* Search takes full width */
     .toolbar-search {
         flex: 1 1 100%;
         max-width: 100%;
+        order: 1;
     }
 
+    /* Zoom and Export on same row */
+    .toolbar-zoom {
+        flex: 1;
+        order: 2;
+        min-width: 140px;
+    }
+
+    .export-button {
+        padding: 8px 10px;
+        font-size: 12px;
+        order: 2;
+        flex-shrink: 1;
+        min-width: 90px;
+    }
+
+    /* Hide text, show only icon on very small screens */
+    .export-button span {
+        display: inline;
+    }
+
+    /* Collapse buttons full width */
     .toolbar-collapse {
         flex: 1 1 100%;
         max-width: 100%;
         justify-content: center;
+        order: 3;
     }
 
     .collapse-button {
         flex: 1;
         justify-content: center;
+        padding: 8px 12px;
+        font-size: 12px;
     }
+}
 
-    .org-chart-node {
-        min-width: 160px;
-        max-width: 180px;
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .org-chart-toolbar {
         padding: 10px;
+        gap: 8px;
     }
 
-    .node-image,
-    .node-image-placeholder {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+    /* Stack zoom controls vertically or make them smaller */
+    .toolbar-zoom {
+        min-width: auto;
     }
 
-    .node-name {
-        font-size: 13px;
+    .zoom-button {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
     }
 
-    .node-title {
+    .zoom-level {
+        min-width: 40px;
         font-size: 11px;
     }
 
-    .org-chart-wrapper {
-        padding: 20px;
+    /* Compact export button */
+    .export-button {
+        padding: 6px 8px;
+        font-size: 11px;
+        min-width: 80px;
+        gap: 4px;
     }
 
-    .node-collapse-button {
-        width: 20px;
-        height: 20px;
-        font-size: 14px;
+    /* Optional: Hide export icon on very small screens */
+    .export-button svg,
+    .export-button .icon {
+        display: none;
+    }
+
+    .collapse-button {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .search-input {
+        padding: 10px 36px 10px 36px;
+        font-size: 13px;
+    }
+}
+
+/* ==================== ALTERNATIVE: DROPDOWN MENU FOR MOBILE ==================== */
+/* Uncomment this section if you want to use a dropdown menu instead on small screens */
+
+/*
+@media (max-width: 768px) {
+    .toolbar-zoom,
+    .export-button,
+    .toolbar-collapse {
+        display: none;
+    }
+
+    .toolbar-menu-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #d0d0d0;
+        background-color: #ffffff;
+        border-radius: 6px;
+        cursor: pointer;
+        order: 2;
+    }
+
+    .toolbar-menu-dropdown {
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 8px;
+        z-index: 100;
+        display: none;
+    }
+
+    .toolbar-menu-dropdown.active {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+*/
+
+/* ==================== FLEXIBLE TOOLBAR LAYOUT ==================== */
+/* This provides a more flexible approach that adapts better */
+
+@media (max-width: 1200px) {
+    .org-chart-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto;
+        gap: 12px;
+    }
+
+    .toolbar-search {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        max-width: 100%;
+    }
+
+    .toolbar-zoom {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .export-button {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .toolbar-collapse {
+        grid-column: 3;
+        grid-row: 2;
+        justify-self: end;
+    }
+}
+
+@media (max-width: 768px) {
+    .org-chart-toolbar {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
+
+    .toolbar-search {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .toolbar-zoom {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: stretch;
+        justify-content: center;
+    }
+
+    .export-button {
+        grid-column: 1;
+        grid-row: 3;
+        justify-self: stretch;
+    }
+
+    .toolbar-collapse {
+        grid-column: 1;
+        grid-row: 4;
+        justify-self: stretch;
+        max-width: 100%;
+    }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+/* Add these utility classes to your toolbar elements for better control */
+
+.toolbar-item {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.toolbar-item.no-shrink {
+    flex-shrink: 0;
+}
+
+.toolbar-item.full-width-mobile {
+    @media (max-width: 768px) {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+/* ==================== BUTTON SIZE VARIANTS ==================== */
+
+/* You can add these classes to buttons for different size variants */
+
+.button-sm {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.button-md {
+    padding: 8px 14px;
+    font-size: 13px;
+}
+
+.button-lg {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+/* Auto-resize based on screen size */
+@media (max-width: 1024px) {
+    .export-button:not(.button-lg):not(.button-sm) {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .export-button:not(.button-lg):not(.button-sm) {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .export-button:not(.button-lg):not(.button-sm) {
+        padding: 6px 8px;
+        font-size: 11px;
     }
 }
 
