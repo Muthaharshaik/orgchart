@@ -15,7 +15,7 @@ A powerful and feature-rich organization chart widget for Mendix applications th
 ### Customization Options
 - **Department Display**: Toggle department information visibility
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Accessible**: Full keyboard navigation and screen reader support
+- **Accessible**: - Keyboard navigation support, Basic screen reader compatibility
 
 ### Performance
 - **Optimized Rendering**: Uses React.memo to prevent unnecessary re-renders
@@ -61,7 +61,7 @@ The widget requires a data source with the following attributes:
 
 3. **Configure Display Options**
    - Toggle "Show Department" to display/hide department info
-   - Enable "Export (PNG/PDF)" to allow chart export
+   - Enable "Export (PNG)" to allow chart export
 
 4. **Add Actions (Optional)**
    - Configure "On Node Click" to execute when an employee card is clicked
@@ -153,6 +153,13 @@ The widget comes with a modern, professional design out of the box. You can cust
 - Check that at least one employee has no manager (root node)
 - Ensure employee IDs and manager IDs are consistent
 
+## Mendix Compatibility
+
+- Mendix Studio Pro 9.0 and above
+- Web applications
+- PWA supported
+- Not supported for Native Mobile
+
 ### Hierarchy Looks Wrong
 - Check for circular references in your data
 - Verify manager IDs match existing employee IDs
@@ -176,6 +183,13 @@ The widget is built with accessibility in mind:
 - High contrast mode support
 - Reduced motion support for animations
 
+## Use Cases
+
+- HR employee directory
+- Internal company portal
+- Management reporting dashboards
+- Organizational structure visualization
+
 ## Version History
 
 ### Version 1.0.0
@@ -188,15 +202,17 @@ The widget is built with accessibility in mind:
 - Full accessibility support
 
 ## Support
+For issues, feature requests, or improvements, please raise a ticket via the Mendix Marketplace page or contact the author.
 
 
 ## License
 
-[Specify your license here - MIT, Apache 2.0, etc.]
+Apache License 2.0
 
 ## Credits
 
-Developed by [Lowcode Labs/Muthahar Shaik]
+Developed by LowcodeLabs
+Author: Muthahar Shaik
 
 Built with:
 - React

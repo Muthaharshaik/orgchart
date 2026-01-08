@@ -3,10 +3,10 @@ import { Tree, TreeNode } from "react-organizational-chart";
 import EmployeeNode from "./components/EmployeeNode";
 import { buildHierarchy, searchEmployees } from "./utils/dataTransformer";
 import ErrorBoundary from "./components/ErrorBoundary"
-import './ui/OrgChart.css'
+import './ui/OrganizationChart.css'
 import html2canvas from "html2canvas";
 
-export default function OrgChart(props) {
+export default function OrganizationChart(props) {
     const {
         employeeEntity,
         employeeId,
@@ -37,6 +37,9 @@ export default function OrgChart(props) {
     const highlightedNodeRef = useRef(null);
     const searchRef = useRef(null);
     const treeRef = useRef(null);
+    const rootNodeRef = useRef(null);
+    const centeringTimeoutRef = useRef(null); // NEW: For production centering
+
     
     // Auto-scroll to highlighted node
     useEffect(() => {
@@ -178,18 +181,27 @@ export default function OrgChart(props) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // Cleanup centering timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (centeringTimeoutRef.current) {
+                clearTimeout(centeringTimeoutRef.current);
+            }
+        };
+    }, []);
     
     /**
      * Handle node click - triggers Mendix Action
      */
     const handleNodeClick = useCallback((employee) => {
-    try {
+        try {
             if (onNodeClick && onNodeClick.canExecute && employee.mendixObject) {
                 onNodeClick.execute({mendixObject: employee.mendixObject});
-        }
-    } catch (err) {
+            }
+        } catch (err) {
             // Silent fail - action execution errors are handled by Mendix
-    }
+        }
     }, [onNodeClick]);
 
 
@@ -212,7 +224,60 @@ export default function OrgChart(props) {
     }, []);
 
     /**
-     * Collapse all children except CEO
+     * PRODUCTION-GRADE: Robust centering function
+     * Uses IntersectionObserver for reliability
+     */
+    const centerOnRootNode = useCallback((options = {}) => {
+        const { 
+            behavior = 'smooth',
+            delay = 0,
+            block = 'center',
+            inline = 'center'
+        } = options;
+
+        // Clear any pending centering operations
+        if (centeringTimeoutRef.current) {
+            clearTimeout(centeringTimeoutRef.current);
+        }
+
+        centeringTimeoutRef.current = setTimeout(() => {
+            if (!rootNodeRef.current || !chartRef.current) {
+                return;
+            }
+
+            try {
+                // Use IntersectionObserver to ensure element is ready in DOM
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.target === rootNodeRef.current) {
+                            rootNodeRef.current.scrollIntoView({
+                                behavior,
+                                block,
+                                inline
+                            });
+                            observer.disconnect();
+                        }
+                    });
+                }, { threshold: 0 });
+
+                observer.observe(rootNodeRef.current);
+
+                // Safety timeout to disconnect observer
+                setTimeout(() => observer.disconnect(), 1000);
+
+            } catch (err) {
+                // Fallback for older browsers that don't support IntersectionObserver
+                try {
+                    rootNodeRef.current?.scrollIntoView(false);
+                } catch (fallbackErr) {
+                    console.error('Centering failed:', fallbackErr);
+                }
+            }
+        }, delay);
+    }, []);
+
+    /**
+     * UPDATED: Collapse all children except CEO
      */
     const handleCollapseAll = useCallback(() => {
         if (!hierarchyData) return;
@@ -228,11 +293,14 @@ export default function OrgChart(props) {
     }, [hierarchyData]);
 
     /**
-     * Expand all nodes
+     * UPDATED: Expand all nodes with proper centering
      */
     const handleExpandAll = useCallback(() => {
         setCollapsedNodes(new Set());
-    }, []);
+        // Center after expansion animation completes
+        // Adjust delay to match your CSS animation duration
+        centerOnRootNode({ delay: 150 });
+    }, [centerOnRootNode]);
 
     /**
      * Handle search input change
@@ -315,38 +383,28 @@ export default function OrgChart(props) {
      */
     const handleZoomIn = useCallback(() => {
         setZoomLevel(prev => Math.min(prev + 0.1, 1.5));
+         centerOnRootNode({ delay: 0 });
     }, []);
 
     const handleZoomOut = useCallback(() => {
         setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
+         centerOnRootNode({ delay: 0 });
     }, []);
 
+    /**
+     * UPDATED: Reset with proper centering timing
+     */
     const handleZoomReset = useCallback(() => {
         setZoomLevel(0.8);
         setSearchTerm('');
         setHighlightedNode(null);
-    }, []);
-
-    // Auto-scroll to center when zoom changes
-    useEffect(() => {
-        if (chartRef.current) {
-            const wrapper = chartRef.current;
-            
-            setTimeout(() => {
-                try {
-                    const scrollWidth = wrapper.scrollWidth;
-                    const clientWidth = wrapper.clientWidth;
-                    const centerScrollLeft = (scrollWidth - clientWidth) / 2;
-                    
-                    wrapper.scrollTo({
-                        left: centerScrollLeft,
-                    });
-                } catch (err) {
-                    // Silent fail - not critical
-                }
-            }, 50);
-        }
-    }, [zoomLevel, hierarchyData]);
+        setSearchResults([]);
+        setCurrentResultIndex(0);
+        setShowSearchDropdown(false);
+        
+        // Center after zoom transition completes (200ms transition + 50ms buffer)
+        centerOnRootNode({ delay: 250 });
+    }, [centerOnRootNode]);
 
     const handleRemove = useCallback(() => {
         setSearchTerm('');
@@ -618,7 +676,7 @@ export default function OrgChart(props) {
                             onClick={handleZoomReset}
                             className="zoom-button"
                             aria-label="Reset zoom"
-                            title="Reset zoom"
+                            title="Reset zoom and center view"
                         >
                             ⟲
                         </button>
@@ -664,7 +722,7 @@ export default function OrgChart(props) {
                                         showDepartment={showDepartment}
                                         onClick={handleNodeClick}
                                         isHighlighted={highlightedNode === hierarchyData.id}
-                                        nodeRef={highlightedNode === hierarchyData.id ? highlightedNodeRef : null}
+                                        nodeRef={rootNodeRef}
                                         isCollapsed={collapsedNodes.has(hierarchyData.id)}
                                         hasChildren={hierarchyData.children && hierarchyData.children.length > 0}
                                         onToggleCollapse={handleToggleCollapse}

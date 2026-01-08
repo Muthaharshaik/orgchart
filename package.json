@@ -1,6 +1,6 @@
 {
-  "name": "orgchart",
-  "widgetName": "OrgChart",
+  "name": "organizationchart",
+  "widgetName": "OrganizationChart",
   "version": "1.0.0",
   "description": "A powerful organization chart widget for Mendix that visualizes hierarchical employee structures with interactive features including real-time search, collapse/expand branches, zoom controls, and PNG export. Perfect for HR dashboards and organizational management applications.",
   "copyright": "© 2024 Muthahar Shaik (LowCodeLabs). All rights reserved.",

@@ -6,5 +6,5 @@ export function preview({ sampleText }) {
 }
 
 export function getPreviewCss() {
-    return require("./ui/OrgChart.css");
+    return require("./ui/OrganizationChart.css");
 }
